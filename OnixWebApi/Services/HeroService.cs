@@ -25,5 +25,11 @@ namespace OnixWebApi.Services
         {
             return _context.Heroes.Where(hero => id == hero.Id).Single();
         }
+
+        public void UpdateHero(Hero hero)
+        {
+            var respectiveHero = _context.Heroes.Where(h => h.Id == hero.Id).Single();
+            throw new NotImplementedException();
+        }
     }
 }

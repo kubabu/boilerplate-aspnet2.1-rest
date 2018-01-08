@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OnixWebApi.Models;
 using OnixWebApi.Models.DbContexts;
+using OnixWebApi.Services;
 
 namespace OnixWebApi.Controllers
 {
@@ -14,18 +15,18 @@ namespace OnixWebApi.Controllers
     [Route("api/Heroes")]
     public class HeroesController : Controller
     {
-        private readonly OrderShippingContext _context;
+        private readonly HeroService _service;
 
-        public HeroesController(OrderShippingContext context)
+        public HeroesController(HeroService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: api/Heroes
         [HttpGet]
         public IEnumerable<Hero> GetHeroes()
         {
-            return _context.Heroes;
+            return _service.GetHeroes();
         }
 
         // GET: api/Heroes/5
@@ -37,7 +38,7 @@ namespace OnixWebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var hero = await _context.Heroes.SingleOrDefaultAsync(m => m.Id == id);
+            var hero = await _service.GetHeroAsync(id);
 
             if (hero == null)
             {
@@ -61,25 +62,16 @@ namespace OnixWebApi.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(hero).State = EntityState.Modified;
+            bool updated = await _service.UpdateHeroAsync(hero);
 
-            try
+            if (updated)
             {
-                await _context.SaveChangesAsync();
+                return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
+            else
             {
-                if (!HeroExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
-
-            return NoContent();
         }
 
         // POST: api/Heroes
@@ -91,8 +83,7 @@ namespace OnixWebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.Heroes.Add(hero);
-            await _context.SaveChangesAsync();
+            await _service.AddHeroAsync(hero);
 
             return CreatedAtAction("GetHero", new { id = hero.Id }, hero);
         }
@@ -106,21 +97,17 @@ namespace OnixWebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var hero = await _context.Heroes.SingleOrDefaultAsync(m => m.Id == id);
-            if (hero == null)
+            bool updated = await _service.DeleteHeroAsync(id);
+
+            if (updated)
+            {
+                return NoContent();
+            }
+            else
             {
                 return NotFound();
             }
-
-            _context.Heroes.Remove(hero);
-            await _context.SaveChangesAsync();
-
-            return Ok(hero);
         }
-
-        private bool HeroExists(int id)
-        {
-            return _context.Heroes.Any(e => e.Id == id);
-        }
+        
     }
 }

@@ -34,10 +34,15 @@ namespace OnixWebApi
             services.AddCors();
             services.AddMvc();
 
-            services.AddEntityFrameworkNpgsql()
-                .AddDbContext<OrderShippingContext>(options => options.UseNpgsql(_connectionString));
+            //services.AddEntityFrameworkNpgsql()
+            //    .AddDbContext<OrderShippingContext>(
+            //    options => options.UseNpgsql(_connectionString)
+            //    );
 
-            //services.AddTransient<OrderShippingContext>();
+            services.AddDbContext<OrderShippingContext>(
+                options => options.UseNpgsql(_connectionString)
+            );
+
             services.AddTransient<HeroService>();
         }
 

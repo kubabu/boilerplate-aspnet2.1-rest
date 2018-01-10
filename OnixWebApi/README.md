@@ -1,14 +1,12 @@
-﻿* Getting started
+﻿# Setup
 
-Install postgresql (tested on Postgres 10)
-Run:
-dotnet restore
-Set proper ConnectionString in appsettings.json
-Run:
-dotnet ef database update 
+Install postgresql, do not forget password. Set proper ConnectionString in appsettings.json and run
+	
+	dotnet restore
+	dotnet ef database update 
 
-* DB Models changes
+# DB Models changes
 
-This is code first EF Core application, 
-After updating models run:
-dotnet ef database update 
+This is code first EF Core application, after updating models run
+	
+	dotnet ef database update 

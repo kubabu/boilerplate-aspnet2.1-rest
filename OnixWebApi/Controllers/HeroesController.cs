@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OnixWebApi.Models;
-using OnixWebApi.Models.DbContexts;
 using OnixWebApi.Services;
 
 namespace OnixWebApi.Controllers
@@ -24,9 +23,13 @@ namespace OnixWebApi.Controllers
 
         // GET: api/Heroes
         [HttpGet]
-        public IEnumerable<Hero> GetHeroes()
+        public IEnumerable<Hero> GetHeroes(string term)
         {
-            return _service.GetHeroes();
+            if (string.IsNullOrEmpty(term))
+            {
+                return _service.GetHeroes();
+            }
+            return _service.GetHeroes().Where(h => h.Name.ToLower().Contains(term));
         }
 
         // GET: api/Heroes/5

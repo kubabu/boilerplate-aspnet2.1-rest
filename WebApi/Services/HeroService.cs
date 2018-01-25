@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OnixWebApi.Models;
-using OnixWebApi.Models.DbContexts;
+using WebApi.Models;
+using WebApi.Models.DbContexts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OnixWebApi.Services
+namespace WebApi.Services
 {
     public class HeroService
     {
@@ -51,9 +51,16 @@ namespace OnixWebApi.Services
 
         public async Task<Hero> AddHeroAsync(Hero hero)
         {
-            _context.Heroes.Add(hero);
-            await _context.SaveChangesAsync();
-            return hero;
+            try
+            {
+                _context.Heroes.Add(hero);
+                await _context.SaveChangesAsync();
+                return hero;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         public async Task<bool> DeleteHeroAsync(int id)

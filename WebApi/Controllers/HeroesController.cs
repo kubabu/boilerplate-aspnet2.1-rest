@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using OnixWebApi.Models;
-using OnixWebApi.Services;
+using WebApi.Models;
+using WebApi.Services;
 
-namespace OnixWebApi.Controllers
+namespace WebApi.Controllers
 {
     [Produces("application/json")]
     [Route("api/Heroes")]

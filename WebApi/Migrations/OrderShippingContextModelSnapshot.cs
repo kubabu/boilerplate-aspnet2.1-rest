@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
-using OnixWebApi.Models.DbContexts;
+using WebApi.Models.DbContexts;
 using System;
 
-namespace OnixWebApi.Migrations
+namespace WebApi.Migrations
 {
     [DbContext(typeof(OrderShippingContext))]
     partial class OrderShippingContextModelSnapshot : ModelSnapshot

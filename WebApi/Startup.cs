@@ -11,10 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Npgsql;
-using OnixWebApi.Models.DbContexts;
-using OnixWebApi.Services;
+using WebApi.Models.DbContexts;
+using WebApi.Services;
 
-namespace OnixWebApi
+namespace WebApi
 {
     public class Startup
     {

@@ -3,7 +3,12 @@
 Install postgresql, do not forget password. Set proper ConnectionString in appsettings.json and run
 	
 	dotnet restore
-	dotnet ef database update 
+	dotnet ef database update
+
+# SSL Certificate
+
+For development create certificate for localhost domain with "pfx" password and copy it to project root as localhost.pfx
+Install it, or add it CA to trusted root certificates
 
 # DB Models changes
 

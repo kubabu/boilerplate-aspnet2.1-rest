@@ -30,7 +30,7 @@ namespace WebApi
             Configuration = configuration;
             
             _connectionString = Configuration.GetConnectionString("OrderShippingContext");
-            _corsClientUrl = "https://localhost:4200";
+            _corsClientUrl = Configuration.GetValue<string>("CorsClientUrl");
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.

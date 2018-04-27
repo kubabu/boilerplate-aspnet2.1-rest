@@ -36,7 +36,7 @@ namespace WebApi
                 {
                     options.Listen(System.Net.IPAddress.Any, port, listenOptions =>
                         listenOptions.UseHttps(cert));
-                })
+                }) // .UseUrls("http://*:5000")
                 .Build();
 
             return host;

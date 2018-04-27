@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ namespace WebApi
     public class Startup
     {
         private readonly string _connectionString;
-        private readonly string _corsClientUrl;
+        private readonly string[] _corsClientUrls;
 
         public IConfiguration Configuration { get; }
 
@@ -30,14 +31,17 @@ namespace WebApi
             Configuration = configuration;
             
             _connectionString = Configuration.GetConnectionString("OrderShippingContext");
-            _corsClientUrl = Configuration.GetValue<string>("CorsClientUrl");
+            _corsClientUrls = Configuration.GetValue<string>("CorsClientUrl").Split(" ");
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            services.AddMvc();
+            services.AddMvc(config =>
+            {
+                config.Filters.Add(new RequireHttpsAttribute());
+            });
 
             services.AddDbContext<OrderShippingContext>(
                 options => options.UseNpgsql(_connectionString)
@@ -50,7 +54,7 @@ namespace WebApi
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseCors(builder =>
-                builder.WithOrigins(_corsClientUrl)
+                builder.WithOrigins(_corsClientUrls)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()
@@ -62,6 +66,12 @@ namespace WebApi
             }
 
             app.UseMvc();
+
+            //app.UseForwardedHeaders(new ForwardedHeadersOptions // this needs to preceed UseAuthentication
+            //{
+            //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            //});
+            //app.UseAuthentication();  // unused for now
 
             var options = new RewriteOptions()
                 .AddRedirectToHttps();      //  redirects all HTTP requests to HTTPS

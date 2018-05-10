@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using WebApi.Models.Configuration;
 
 namespace WebApi
 {
@@ -18,54 +19,46 @@ namespace WebApi
         private static string currentDir = Directory.GetCurrentDirectory();
 
         public static void Main(string[] args)
-        {
+        {            
             BuildWebHost(args).Run();
         }
 
         public static IWebHost BuildWebHost(string[] args)
         {
-            var config = LoadConfig();
-            var port = ConfigUri(config).Port;
-            var cert = LoadCertificate(config);
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("hosting.json", optional: true)
+                .AddJsonFile($"hosting.{environment}.json", optional: true)
+                .AddEnvironmentVariables()
+                .Build();
+
+            var uris = config.GetSection("server.urls").Value.Split(";").Select(u => new Uri(u)).ToList();
 
             var host = WebHost.CreateDefaultBuilder(args)
                 .UseConfiguration(config)
                 .UseContentRoot(currentDir)
+                .UseIISIntegration()
+                .UseKestrel( options => {
+                    foreach(var uri in uris)
+                    {
+                        if (uri.ToString().Contains("https://"))    // create HTTPS endpoint explicitly
+                        { 
+                            options.Listen(System.Net.IPAddress.Any, uri.Port, listenOptions =>
+                            {
+                                listenOptions.UseHttps(LoadCertificate(config));
+                            });
+                        }
+                    }
+                })
                 .UseStartup<Startup>()
-                .UseKestrel(options =>
-                {
-                    options.Listen(System.Net.IPAddress.Any, port, listenOptions =>
-                        listenOptions.UseHttps(cert));
-                }) // .UseUrls("http://*:5000")
                 .Build();
 
             return host;
         }
 
-        private static IConfigurationRoot LoadConfig()
-        {
-            var config = new ConfigurationBuilder()
-              .SetBasePath(Directory.GetCurrentDirectory())
-              .AddJsonFile("hosting.json", optional: true)
-              .AddJsonFile($"hosting.{environment}.json", optional: true)
-              .AddEnvironmentVariables()
-              .Build();
-
-            return config;
-        }
-
-        private static Uri ConfigUri(IConfigurationRoot config)
-        {
-            var urlSettings = config.GetSection("urls");
-            var urls = urlSettings.Value.Split(';');
-            var url = urls.First();
-
-            return new Uri(url);
-        }
-
         private static X509Certificate2 LoadCertificate(IConfiguration config)
         {
-            var certificateSettings = config.GetSection("certificateSettings");
+            var certificateSettings = config.GetSection(nameof(CertificateSettings));
             var certificateFileName = certificateSettings.GetValue<string>("filename");
             var certificatePassword = certificateSettings.GetValue<string>("password");
 

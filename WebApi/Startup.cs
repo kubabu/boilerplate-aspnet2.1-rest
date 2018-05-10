@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Npgsql;
+using WebApi.Models.Configuration;
 using WebApi.Models.DbContexts;
 using WebApi.Services;
 
@@ -21,61 +22,50 @@ namespace WebApi
 {
     public class Startup
     {
-        private readonly string _connectionString;
-        private readonly string[] _corsClientUrls;
-
         public IConfiguration Configuration { get; }
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            
-            _connectionString = Configuration.GetConnectionString("OrderShippingContext");
-            _corsClientUrls = Configuration.GetValue<string>("CorsClientUrl").Split(" ");
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            services.AddMvc(config =>
-            {
-                config.Filters.Add(new RequireHttpsAttribute());
-            });
+            services.AddMvc();
 
             services.AddDbContext<OrderShippingContext>(
-                options => options.UseNpgsql(_connectionString)
+                options => options.UseNpgsql(Configuration.GetConnectionString("OrderShippingContext"))
             );
 
             services.AddTransient<HeroService>();
+
+            services.AddOptions();
+
+            services.Configure<CertificateSettings>(Configuration.GetSection(nameof(CertificateSettings)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseCors(builder =>
-                builder.WithOrigins(_corsClientUrls)
+                builder.WithOrigins(Configuration.GetValue<string>("CorsClientUrl").Split(" "))
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()
             );
 
+            app.UseMvc();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
+                var options = new RewriteOptions()
+                    .AddRedirectToHttps();      // redirects all HTTP requests to HTTPS in dev mode
+                app.UseRewriter(options);
             }
-
-            app.UseMvc();
-
-            //app.UseForwardedHeaders(new ForwardedHeadersOptions // this needs to preceed UseAuthentication
-            //{
-            //    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            //});
-            //app.UseAuthentication();  // unused for now
-
-            var options = new RewriteOptions()
-                .AddRedirectToHttps();      //  redirects all HTTP requests to HTTPS
-            app.UseRewriter(options);       // if ignoring them is needed, add RequireHttpsAttribute to ConfSvc()
         }
     }
 }

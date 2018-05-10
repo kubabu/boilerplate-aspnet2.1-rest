@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
@@ -17,6 +18,7 @@ namespace WebApi
     {
         private static string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
         private static string currentDir = Directory.GetCurrentDirectory();
+
 
         public static void Main(string[] args)
         {            
@@ -59,8 +61,15 @@ namespace WebApi
         private static X509Certificate2 LoadCertificate(IConfiguration config)
         {
             var settings = config.GetSection(nameof(CertificateSettings)).Get<CertificateSettings>();
-
+            var hash = GitHash();
             return new X509Certificate2(settings.Filename, settings.Password);
+        }
+
+        public static string GitHash()
+        {
+            var asm = typeof(Program).Assembly;
+            var attrs = asm.GetCustomAttributes < AssemblyMetadataAttribute > ();
+            return attrs.FirstOrDefault(a => a.Key == "GitHash")?.Value;
         }
     }
 }

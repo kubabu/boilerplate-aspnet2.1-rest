@@ -57,7 +57,7 @@ namespace WebApi.Services
                 await _context.SaveChangesAsync();
                 return hero;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

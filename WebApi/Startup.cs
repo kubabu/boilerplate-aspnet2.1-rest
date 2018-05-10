@@ -49,8 +49,10 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            var settings = Configuration.GetSection(nameof(WebApiSettings)).Get<WebApiSettings>();
+            
             app.UseCors(builder =>
-                builder.WithOrigins(Configuration.GetValue<string>("CorsClientUrl").Split(" "))
+                builder.WithOrigins(settings.CorsClientUrls.ToArray())
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()

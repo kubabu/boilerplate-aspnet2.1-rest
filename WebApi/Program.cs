@@ -58,11 +58,9 @@ namespace WebApi
 
         private static X509Certificate2 LoadCertificate(IConfiguration config)
         {
-            var certificateSettings = config.GetSection(nameof(CertificateSettings));
-            var certificateFileName = certificateSettings.GetValue<string>("filename");
-            var certificatePassword = certificateSettings.GetValue<string>("password");
+            var settings = config.GetSection(nameof(CertificateSettings)).Get<CertificateSettings>();
 
-            return new X509Certificate2(certificateFileName, certificatePassword);
+            return new X509Certificate2(settings.Filename, settings.Password);
         }
     }
 }

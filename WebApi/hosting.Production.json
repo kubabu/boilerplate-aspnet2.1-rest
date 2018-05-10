@@ -7,5 +7,10 @@
       "Microsoft": "Information"
     }
   },
-  "server.urls": "http://localhost:54556/"
+  "server.urls": "http://localhost:54556/",
+
+  "certificateSettings": { // remove it later
+    "filename": "/home/onix/onixdev.pfx",
+    "password": "passphrase"
+  }
 }

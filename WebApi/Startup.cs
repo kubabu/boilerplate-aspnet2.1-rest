@@ -23,10 +23,12 @@ namespace WebApi
     public class Startup
     {
         public IConfiguration Configuration { get; }
+        private WebApiSettings _settings;
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            _settings = Configuration.GetSection(nameof(WebApiSettings)).Get<WebApiSettings>();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -49,10 +51,8 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            var settings = Configuration.GetSection(nameof(WebApiSettings)).Get<WebApiSettings>();
-            
             app.UseCors(builder =>
-                builder.WithOrigins(settings.CorsClientUrls.ToArray())
+                builder.WithOrigins(_settings.CorsClientUrls.ToArray())
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()

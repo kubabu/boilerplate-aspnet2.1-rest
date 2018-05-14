@@ -7,7 +7,7 @@
       "Microsoft": "Information"
     }
   },
-  "server.urls": "https://localhost:54556/",
+  "server.urls": "https://localhost:5000/",
   "certificateSettings": {
     "filename": "D:\\Sources\\Web\\webapi\\WebApi\\localhost.pfx",
     "password": "pfx"

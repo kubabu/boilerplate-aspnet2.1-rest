@@ -39,11 +39,11 @@ namespace WebApi
             var host = WebHost.CreateDefaultBuilder(args)
                 .UseConfiguration(config)
                 .UseContentRoot(currentDir)
-                .UseIISIntegration()
+                .UseIISIntegration()                // get URLs from launch settings
                 .UseKestrel( options => {
                     foreach(var uri in uris)
                     {
-                        if (uri.ToString().Contains("https://"))    // create HTTPS endpoint explicitly
+                        if (uri.ToString().Contains("https://"))    // create HTTPS endpoint explicitly for srv urls from hosting.json
                         { 
                             options.Listen(System.Net.IPAddress.Any, uri.Port, listenOptions =>
                             {

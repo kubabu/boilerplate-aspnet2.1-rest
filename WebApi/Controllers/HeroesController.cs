@@ -29,7 +29,7 @@ namespace WebApi.Controllers
             {
                 return _service.GetHeroes();
             }
-            return _service.GetHeroes().Where(h => h.Name.ToLower().Contains(term));
+            return _service.GetHeroes().Where(h => h.Name.ToLower().Contains(term.ToLower()));
         }
 
         // GET: api/Heroes/5

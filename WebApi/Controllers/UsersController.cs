@@ -23,49 +23,49 @@ namespace WebApi.Controllers
 
         // GET: api/users
         [HttpGet]
-        public IEnumerable<Hero> GetHeroes(string term)
+        public IEnumerable<User> GetUsers(string term)
         {
             if (string.IsNullOrEmpty(term))
             {
-                return _service.GetHeroes();
+                return _service.GetUsers();
             }
-            return _service.GetHeroes().Where(h => h.Name.ToLower().Contains(term.ToLower()));
+            return _service.GetUsers().Where(h => h.Name.ToLower().Contains(term.ToLower()));
         }
 
         // GET: api/users/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetHero([FromRoute] int id)
+        public async Task<IActionResult> GetUser([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var hero = await _service.GetHeroAsync(id);
+            var user = await _service.GetUserAsync(id);
 
-            if (hero == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return Ok(hero);
+            return Ok(user);
         }
 
         // PUT: api/users/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutHero([FromRoute] int id, [FromBody] Hero hero)
+        public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] User user)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != hero.Id)
+            if (id != user.Id)
             {
                 return BadRequest();
             }
 
-            bool updated = await _service.UpdateHeroAsync(hero);
+            bool updated = await _service.UpdateUserAsync(user);
 
             if (updated)
             {
@@ -79,28 +79,28 @@ namespace WebApi.Controllers
 
         // POST: api/users
         [HttpPost]
-        public async Task<IActionResult> PostHero([FromBody] Hero hero)
+        public async Task<IActionResult> PostUser([FromBody] User user)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            await _service.AddHeroAsync(hero);
+            await _service.AddUserAsync(user);
 
-            return CreatedAtAction("GetHero", new { id = hero.Id }, hero);
+            return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
 
         // DELETE: api/users/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteHero([FromRoute] int id)
+        public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            bool updated = await _service.DeleteHeroAsync(id);
+            bool updated = await _service.DeleteUserAsync(id);
 
             if (updated)
             {

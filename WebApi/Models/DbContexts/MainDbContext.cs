@@ -13,9 +13,10 @@ namespace WebApi.Models.DbContexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Hero>()
+            modelBuilder.Entity<User>()
               .HasKey(h => h.Id);
 
+            // example - relations in EF
             modelBuilder.Entity<ShopProduct>()
                         .HasKey(entity => new { entity.ProductId, entity.ShopId });
 
@@ -30,7 +31,7 @@ namespace WebApi.Models.DbContexts
                          .HasForeignKey(sp => sp.ShopId);
         }
 
-        public DbSet<Hero> Heroes { get; set; }
+        public DbSet<User> Heroes { get; set; } // TODO rename to Users on next migration
 
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Product> Products { get; set; }

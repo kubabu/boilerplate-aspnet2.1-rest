@@ -17,19 +17,19 @@ namespace WebApi.Services
             _context = dbContextFunc;
         }
 
-        public IEnumerable<Hero> GetHeroes()
+        public IEnumerable<User> GetUsers()
         {
             return _context.Heroes;
         }
 
-        public Task<Hero> GetHeroAsync(int id)
+        public Task<User> GetUserAsync(int id)
         {
             return _context.Heroes.SingleOrDefaultAsync(m => m.Id == id);
         }
 
-        public async Task<bool> UpdateHeroAsync(Hero hero)
+        public async Task<bool> UpdateUserAsync(User user)
         {
-            _context.Entry(hero).State = EntityState.Modified;
+            _context.Entry(user).State = EntityState.Modified;
 
             try
             {
@@ -37,7 +37,7 @@ namespace WebApi.Services
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!HeroExists(hero.Id))
+                if (!UserExists(user.Id))
                 {
                     return false;
                 }
@@ -49,13 +49,13 @@ namespace WebApi.Services
             return true;
         }
 
-        public async Task<Hero> AddHeroAsync(Hero hero)
+        public async Task<User> AddUserAsync(User user)
         {
             try
             {
-                _context.Heroes.Add(hero);
+                _context.Heroes.Add(user);
                 await _context.SaveChangesAsync();
-                return hero;
+                return user;
             }
             catch (Exception)
             {
@@ -63,20 +63,20 @@ namespace WebApi.Services
             }
         }
 
-        public async Task<bool> DeleteHeroAsync(int id)
+        public async Task<bool> DeleteUserAsync(int id)
         {
-            var hero = await _context.Heroes.SingleOrDefaultAsync(m => m.Id == id);
-            if (hero == null)
+            var user = await _context.Heroes.SingleOrDefaultAsync(m => m.Id == id);
+            if (user == null)
             {
                 return false;
             }
 
-            _context.Heroes.Remove(hero);
+            _context.Heroes.Remove(user);
             await _context.SaveChangesAsync();
             return true;
         }
 
-        private bool HeroExists(int id)
+        private bool UserExists(int id)
         {
             return _context.Heroes.Any(e => e.Id == id);
         }

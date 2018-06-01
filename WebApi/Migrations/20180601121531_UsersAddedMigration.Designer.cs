@@ -11,9 +11,10 @@ using WebApi.Models.DbContexts;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class OrderShippingContextModelSnapshot : ModelSnapshot
+    [Migration("20180601121531_UsersAddedMigration")]
+    partial class UsersAddedMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

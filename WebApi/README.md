@@ -14,4 +14,5 @@ Install it, or add it CA to trusted root certificates
 
 This is code first EF Core application, after updating models run
 	
+	dotnet ef migrations add MigrationName
 	dotnet ef database update 

@@ -19,12 +19,12 @@ namespace WebApi.Services
 
         public IEnumerable<User> GetUsers()
         {
-            return _context.Heroes;
+            return _context.Users;
         }
 
         public Task<User> GetUserAsync(int id)
         {
-            return _context.Heroes.SingleOrDefaultAsync(m => m.Id == id);
+            return _context.Users.SingleOrDefaultAsync(m => m.Id == id);
         }
 
         public async Task<bool> UpdateUserAsync(User user)
@@ -53,7 +53,7 @@ namespace WebApi.Services
         {
             try
             {
-                _context.Heroes.Add(user);
+                _context.Users.Add(user);
                 await _context.SaveChangesAsync();
                 return user;
             }
@@ -65,20 +65,20 @@ namespace WebApi.Services
 
         public async Task<bool> DeleteUserAsync(int id)
         {
-            var user = await _context.Heroes.SingleOrDefaultAsync(m => m.Id == id);
+            var user = await _context.Users.SingleOrDefaultAsync(m => m.Id == id);
             if (user == null)
             {
                 return false;
             }
 
-            _context.Heroes.Remove(user);
+            _context.Users.Remove(user);
             await _context.SaveChangesAsync();
             return true;
         }
 
         private bool UserExists(int id)
         {
-            return _context.Heroes.Any(e => e.Id == id);
+            return _context.Users.Any(e => e.Id == id);
         }
     }
 }

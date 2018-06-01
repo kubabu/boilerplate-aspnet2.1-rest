@@ -11,17 +11,17 @@ using WebApi.Services;
 namespace WebApi.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Heroes")]
-    public class HeroesController : Controller
+    [Route("api/users")]
+    public class UsersController : Controller
     {
-        private readonly HeroService _service;
+        private readonly UserService _service;
 
-        public HeroesController(HeroService service)
+        public UsersController(UserService service)
         {
             _service = service;
         }
 
-        // GET: api/Heroes
+        // GET: api/users
         [HttpGet]
         public IEnumerable<Hero> GetHeroes(string term)
         {
@@ -32,7 +32,7 @@ namespace WebApi.Controllers
             return _service.GetHeroes().Where(h => h.Name.ToLower().Contains(term.ToLower()));
         }
 
-        // GET: api/Heroes/5
+        // GET: api/users/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetHero([FromRoute] int id)
         {
@@ -51,7 +51,7 @@ namespace WebApi.Controllers
             return Ok(hero);
         }
 
-        // PUT: api/Heroes/5
+        // PUT: api/users/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutHero([FromRoute] int id, [FromBody] Hero hero)
         {
@@ -77,7 +77,7 @@ namespace WebApi.Controllers
             }
         }
 
-        // POST: api/Heroes
+        // POST: api/users
         [HttpPost]
         public async Task<IActionResult> PostHero([FromBody] Hero hero)
         {
@@ -91,7 +91,7 @@ namespace WebApi.Controllers
             return CreatedAtAction("GetHero", new { id = hero.Id }, hero);
         }
 
-        // DELETE: api/Heroes/5
+        // DELETE: api/users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteHero([FromRoute] int id)
         {

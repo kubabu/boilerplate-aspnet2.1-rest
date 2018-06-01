@@ -37,11 +37,12 @@ namespace WebApi
             services.AddCors();
             services.AddMvc();
 
-            services.AddDbContext<OrderShippingContext>(
-                options => options.UseNpgsql(Configuration.GetConnectionString("OrderShippingContext"))
+            services.AddDbContext<MainDbContext>(
+                options => options.UseNpgsql(
+                    Configuration.GetConnectionString(typeof(MainDbContext).FullName.Split(".").Last()))
             );
 
-            services.AddTransient<HeroService>();
+            services.AddTransient<UserService>();
 
             services.AddOptions();
 

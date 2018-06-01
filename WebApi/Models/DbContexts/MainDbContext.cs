@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace WebApi.Models.DbContexts
 {
-    public class OrderShippingContext : DbContext
+    public class MainDbContext : DbContext
     {
-        public OrderShippingContext(DbContextOptions<OrderShippingContext> options) 
+        public MainDbContext(DbContextOptions<MainDbContext> options) 
             : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

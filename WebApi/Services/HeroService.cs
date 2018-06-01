@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace WebApi.Services
 {
-    public class HeroService
+    public class UserService
     {
-        private OrderShippingContext _context;
+        private MainDbContext _context;
 
-        public HeroService(OrderShippingContext dbContextFunc)
+        public UserService(MainDbContext dbContextFunc)
         {
             _context = dbContextFunc;
         }

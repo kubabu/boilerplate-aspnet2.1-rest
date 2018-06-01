@@ -8,8 +8,12 @@
     }
   },
   "server.urls": "https://localhost:5000/",
+
+  "ConnectionStrings": {
+    "MainDbContext": "User ID=postgres;Password=onix@123;Host=192.168.1.81;Port=5432;Database=onixweb;Pooling=true;"
+  },
   "certificateSettings": {
     "filename": "D:\\Sources\\Web\\webapi\\WebApi\\localhost.pfx",
     "password": "pfx"
-  }  
+  }
 }

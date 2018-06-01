@@ -10,7 +10,7 @@ using System;
 
 namespace WebApi.Migrations
 {
-    [DbContext(typeof(OrderShippingContext))]
+    [DbContext(typeof(MainDbContext))]
     [Migration("20180108095422_InitialMigration")]
     partial class InitialMigration
     {

@@ -5,9 +5,11 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using WebApi.Models;
+using WebApi.Models.Configuration;
 using WebApi.Services;
 using WebApi.Services.Interfaces;
 
@@ -19,50 +21,47 @@ namespace WebApi.Controllers
     [Route("api/auth")]
     public class AuthController : Controller
     {
-        //IServeUsers _service;
         private IAuthorizeService _authService;
-        private string _sercurityKey = "abcqwertyasdf1234&*&*@#";
-        //_configuration["SecurityKey"]
+        private WebApiSettings _settings;
 
-        public AuthController(IAuthorizeService authorizeService)
+        public AuthController(IAuthorizeService authorizeService, WebApiSettings settings)
         {
             _authService = authorizeService;
+            _settings = settings;
         }
 
         // POST: api/auth
+        [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> PostTokenRequest([FromBody] TokenRequest request)
         {
-            if (request.Username == "foo" && request.Password == "bar")
+            var user = await _authService.AuthorizeWithLoginAndPasswordAsync(request.Username, request.Password);
+
+            if (user != null)
             {
                 var claims = new[]
                 {
                     new Claim(ClaimTypes.Name, request.Username)
                 };
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_sercurityKey));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.JwtSettings.JwtKey));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                 var token = new JwtSecurityToken(
-                    issuer: "yourdomain.com",
-                    audience: "yourdomain.com",
+                    issuer: _settings.JwtSettings.Issuer,
+                    audience: _settings.JwtSettings.Audience,
                     claims: claims,
                     expires: DateTime.Now.AddMinutes(30),
                     signingCredentials: creds);
 
                 return Ok(new
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(token)
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    user
                 });
             }
 
             return BadRequest("Could not verify username and password");
         }
-
-        //// GET: /<controller>/
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
     }
 }

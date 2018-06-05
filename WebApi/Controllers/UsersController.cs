@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
@@ -11,6 +12,7 @@ using WebApi.Services.Interfaces;
 
 namespace WebApi.Controllers
 {
+    [Authorize]
     [Produces("application/json")]
     [Route("api/users")]
     public class UsersController : Controller

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using WebApi.Models.Configuration;
 using WebApi.Models.DbContexts;
@@ -36,12 +39,33 @@ namespace WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        //ValidateIssuer = true,
+                        //ValidateAudience = true,
+                        //ValidateLifetime = true,
+                        //ValidateIssuerSigningKey = true,
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = _settings.JwtSettings.Issuer,
+                        ValidAudience = _settings.JwtSettings.Issuer,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(_settings.JwtSettings.JwtKey))
+                    };
+                });
             services.AddMvc();
 
             services.AddDbContext<MainDbContext>(
                 options => options.UseNpgsql(
                     Configuration.GetConnectionString(typeof(MainDbContext).FullName.Split(".").Last()))
             );
+
+            services.AddTransient<WebApiSettings>(_ => _settings);
 
             services.AddTransient<IAuthorizeService, AuthService>();
             services.AddTransient<ICheckPasswordService, CheckPasswordService>();
@@ -62,6 +86,7 @@ namespace WebApi
                 .AllowCredentials()
             );
 
+            app.UseAuthentication();
             app.UseMvc();
 
             if (env.IsDevelopment())

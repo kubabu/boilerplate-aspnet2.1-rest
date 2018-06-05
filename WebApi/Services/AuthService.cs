@@ -23,6 +23,7 @@ namespace WebApi.Services
             //throw new NotImplementedException();
             var user = _context.Users.SingleOrDefault(m => m.Name == login);
 
+
             //if()
 
             return user;
@@ -31,8 +32,8 @@ namespace WebApi.Services
         public async Task<User> AuthorizeWithLoginAndPasswordAsync(string login, string password)
         {
             //throw new NotImplementedException();
-            var user = await _context.Users.SingleOrDefaultAsync(m => m.Name == login);
-
+            var user = await _context.Users.FirstAsync(); // SingleOrDefaultAsync(m => m.Name == login);
+            //if(request.Username == "foo" && request.Password == "bar") TODO
             //if()
 
             return user;

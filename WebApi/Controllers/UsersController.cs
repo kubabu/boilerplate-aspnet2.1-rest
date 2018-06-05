@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Models;
 using WebApi.Services;
+using WebApi.Services.Interfaces;
 
 namespace WebApi.Controllers
 {
@@ -14,9 +15,9 @@ namespace WebApi.Controllers
     [Route("api/users")]
     public class UsersController : Controller
     {
-        private readonly UserService _service;
+        private readonly IServeUsers _service;
 
-        public UsersController(UserService service)
+        public UsersController(IServeUsers service)
         {
             _service = service;
         }

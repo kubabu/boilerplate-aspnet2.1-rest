@@ -1,20 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WebApi.Models;
-using WebApi.Models.DbContexts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApi.Models;
+using WebApi.Models.DbContexts;
+using WebApi.Services.Interfaces;
+
 
 namespace WebApi.Services
 {
-    public class UserService
+    public class UserService: IServeUsers
     {
         private MainDbContext _context;
 
-        public UserService(MainDbContext dbContextFunc)
+        public UserService(MainDbContext dbContext)
         {
-            _context = dbContextFunc;
+            _context = dbContext;
         }
 
         public IEnumerable<User> GetUsers()

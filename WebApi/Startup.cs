@@ -17,6 +17,7 @@ using Npgsql;
 using WebApi.Models.Configuration;
 using WebApi.Models.DbContexts;
 using WebApi.Services;
+using WebApi.Services.Interfaces;
 
 namespace WebApi
 {
@@ -42,7 +43,9 @@ namespace WebApi
                     Configuration.GetConnectionString(typeof(MainDbContext).FullName.Split(".").Last()))
             );
 
-            services.AddTransient<UserService>();
+            services.AddTransient<IAuthorizeService, AuthService>();
+            services.AddTransient<ICheckPasswordService, CheckPasswordService>();
+            services.AddTransient<IServeUsers, UserService>();
 
             services.AddOptions();
 

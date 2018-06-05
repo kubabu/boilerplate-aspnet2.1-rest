@@ -13,7 +13,6 @@ using WebApi.Models.Configuration;
 using WebApi.Services;
 using WebApi.Services.Interfaces;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace WebApi.Controllers
 {
@@ -22,12 +21,12 @@ namespace WebApi.Controllers
     public class AuthController : Controller
     {
         private IAuthorizeService _authService;
-        private WebApiSettings _settings;
+        private IGenerateSecurityTokens _generateTokensService;
 
-        public AuthController(IAuthorizeService authorizeService, WebApiSettings settings)
+        public AuthController(IAuthorizeService authorizeService, IGenerateSecurityTokens generateTokens)
         {
             _authService = authorizeService;
-            _settings = settings;
+            _generateTokensService = generateTokens;
         }
 
         // POST: api/auth
@@ -41,18 +40,9 @@ namespace WebApi.Controllers
             {
                 var claims = new[]
                 {
-                    new Claim(ClaimTypes.Name, request.Username)
+                    new Claim(ClaimTypes.Name, user.Name)
                 };
-
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.JwtSettings.JwtKey));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-                var token = new JwtSecurityToken(
-                    issuer: _settings.JwtSettings.Issuer,
-                    audience: _settings.JwtSettings.Audience,
-                    claims: claims,
-                    expires: DateTime.Now.AddMinutes(30),
-                    signingCredentials: creds);
+                var token = _generateTokensService.GenerateSecurityToken(claims);
 
                 return Ok(new
                 {

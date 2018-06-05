@@ -26,7 +26,7 @@ namespace WebApi.Services
 
         public Task<User> GetUserAsync(int id)
         {
-            return _context.Users.SingleOrDefaultAsync(m => m.Id == id);
+            return _context.Users.SingleOrDefaultAsync(m => m.Id == id); 
         }
 
         public async Task<bool> UpdateUserAsync(User user)

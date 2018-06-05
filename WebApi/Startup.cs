@@ -44,18 +44,13 @@ namespace WebApi
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        //ValidateIssuer = true,
-                        //ValidateAudience = true,
-                        //ValidateLifetime = true,
-                        //ValidateIssuerSigningKey = true,
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
                         ValidIssuer = _settings.JwtSettings.Issuer,
                         ValidAudience = _settings.JwtSettings.Issuer,
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(_settings.JwtSettings.JwtKey))
+                        IssuerSigningKey = new SymmetricSecurityKey(_settings.JwtSettings.JwtKeyBytes)
                     };
                 });
             services.AddMvc();
@@ -68,6 +63,7 @@ namespace WebApi
             services.AddTransient<WebApiSettings>(_ => _settings);
 
             services.AddTransient<IAuthorizeService, AuthService>();
+            services.AddTransient<IGenerateSecurityTokens, GenerateSecurityTokens>();
             services.AddTransient<ICheckPasswordService, CheckPasswordService>();
             services.AddTransient<IServeUsers, UserService>();
 

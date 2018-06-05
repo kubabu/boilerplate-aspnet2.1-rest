@@ -23,12 +23,13 @@ namespace WebApi.Services
         {
             var key = new SymmetricSecurityKey(_settings.JwtKeyBytes);  // todo: maybe put there asymmetric RSA?
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expires = DateTime.Now.AddMinutes(_settings.LifetimeMinutes);
 
             var token = new JwtSecurityToken(
                 issuer: _settings.Issuer,
                 audience: _settings.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(_settings.LifetimeMinutes),
+                expires: expires,
                 signingCredentials: creds);
 
             return token;

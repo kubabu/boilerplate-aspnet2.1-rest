@@ -23,7 +23,7 @@ namespace WebApi.Services
         public async Task<ClientUser> AuthorizeWithLoginAndPasswordAsync(string login, string password)
         {
             var user = await _context.Users
-                .OrderBy(u => u.Name)
+                .OrderBy(u => u.Name == login)
                 .FirstOrDefaultAsync();
             
             if(user != null && _checkPasswordService.IsPasswordValidForUser(user, password))

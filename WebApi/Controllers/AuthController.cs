@@ -47,7 +47,8 @@ namespace WebApi.Controllers
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
-                    user
+                    validTo = token.ValidTo,
+                    user = user
                 });
             }
 

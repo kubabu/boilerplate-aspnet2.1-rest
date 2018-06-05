@@ -5,13 +5,20 @@ using System.Threading.Tasks;
 
 namespace WebApi.Models
 {
-    public class User
+    public class ClientUser
     {
-        public int Id { get; set; }
+        // mask password, primary key
         public string Name { get; set; }
         public string Description { get; set; }
-        public string Password { get; set; }
         public string QrIdentifier { get; set; }
         public string StartupUri { get; set; }
+
+        public ClientUser(User user)
+        {
+            Name = user.Name;
+            Description = user.Description;
+            QrIdentifier = user.QrIdentifier;
+            StartupUri = user.StartupUri;
+        }
     }
 }

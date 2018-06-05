@@ -28,7 +28,7 @@ namespace WebApi.Services
                 issuer: _settings.Issuer,
                 audience: _settings.Audience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddMinutes(_settings.LifetimeMinutes),
                 signingCredentials: creds);
 
             return token;

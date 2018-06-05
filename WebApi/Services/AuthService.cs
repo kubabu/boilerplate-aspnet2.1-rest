@@ -11,32 +11,26 @@ namespace WebApi.Services
 {
     public class AuthService: IAuthorizeService
     {
+        private ICheckPasswordService _checkPasswordService;
         private MainDbContext _context;
 
-        public AuthService(MainDbContext dbContext)
+        public AuthService(MainDbContext dbContext, ICheckPasswordService checkPasswordService)
         {
             _context = dbContext;
+            _checkPasswordService = checkPasswordService;
         }
 
-        public User AuthorizeWithLoginAndPassword(string login, string password)
+        public async Task<ClientUser> AuthorizeWithLoginAndPasswordAsync(string login, string password)
         {
-            //throw new NotImplementedException();
-            var user = _context.Users.SingleOrDefault(m => m.Name == login);
-
-
-            //if()
-
-            return user;
-        }
-
-        public async Task<User> AuthorizeWithLoginAndPasswordAsync(string login, string password)
-        {
-            //throw new NotImplementedException();
-            var user = await _context.Users.FirstAsync(); // SingleOrDefaultAsync(m => m.Name == login);
-            //if(request.Username == "foo" && request.Password == "bar") TODO
-            //if()
-
-            return user;
+            var user = await _context.Users
+                .OrderBy(u => u.Name)
+                .FirstOrDefaultAsync();
+            
+            if(user != null && _checkPasswordService.IsPasswordValidForUser(user, password))
+            {
+                return new ClientUser(user);
+            }
+            return null;
         }
     }
 }

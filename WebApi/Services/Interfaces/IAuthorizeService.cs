@@ -8,7 +8,6 @@ namespace WebApi.Services.Interfaces
 {
     public interface IAuthorizeService
     {
-        User AuthorizeWithLoginAndPassword(string login, string password);
-        Task<User> AuthorizeWithLoginAndPasswordAsync(string login, string password);
+        Task<ClientUser> AuthorizeWithLoginAndPasswordAsync(string login, string password);
     }
 }

@@ -52,7 +52,7 @@ namespace WebApi.Controllers
                 });
             }
 
-            return BadRequest("Could not verify username and password");
+            return NotFound("Could not verify username and password");
         }
     }
 }

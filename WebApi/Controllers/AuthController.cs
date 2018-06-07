@@ -34,25 +34,32 @@ namespace WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> PostTokenRequest([FromBody] TokenRequest request)
         {
-            var user = await _authService.AuthorizeWithLoginAndPasswordAsync(request.Username, request.Password);
-
-            if (user != null)
+            try
             {
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.Name, user.Name)
-                };
-                var token = _generateTokensService.GenerateSecurityToken(claims);
+                var user = await _authService.AuthorizeWithLoginAndPasswordAsync(request.Username, request.Password);
 
-                return Ok(new
+                if (user != null)
                 {
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
-                    validTo = token.ValidTo,
-                    user = user
-                });
+                    var claims = new[]
+                    {
+                        new Claim(ClaimTypes.Name, user.Name)
+                    };
+                    var token = _generateTokensService.GenerateSecurityToken(claims);
+
+                    return Ok(new
+                    {
+                        token = new JwtSecurityTokenHandler().WriteToken(token),
+                        validTo = token.ValidTo,
+                        user = user
+                    });
+                }
+
+                return NotFound("Błędny login lub hasło");
             }
-
-            return NotFound("Could not verify username and password");
+            catch (Exception ex)
+            {
+                return BadRequest("Hasło jest nieprawidłowe, skontaktuj się z administratorem");
+            }
         }
     }
 }

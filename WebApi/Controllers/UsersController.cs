@@ -12,7 +12,7 @@ using WebApi.Services.Interfaces;
 
 namespace WebApi.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Produces("application/json")]
     [Route("api/users")]
     public class UsersController : Controller

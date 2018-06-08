@@ -4,14 +4,19 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <ApplicationIcon />
+
+    <OutputType>Exe</OutputType>
+
+    <StartupObject />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EntityFrameworkTesting.Moq" Version="1.2.1" />
     <PackageReference Include="FluentAssertions" Version="5.3.2" />
     <PackageReference Include="Moq" Version="4.8.2" />
     <PackageReference Include="nunit" Version="3.10.1" />

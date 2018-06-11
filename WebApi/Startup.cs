@@ -76,7 +76,7 @@ namespace WebApi
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseCors(builder =>
-                builder.WithOrigins(_settings.CorsClientUrls.ToArray())
+                builder.AllowAnyOrigin() //WithOrigins(_settings.CorsClientUrls.ToArray())
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()

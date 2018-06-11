@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using WebApi.Models;
 using WebApi.Models.Configuration;
@@ -22,11 +23,13 @@ namespace WebApi.Controllers
     {
         private IAuthorizeService _authService;
         private IGenerateSecurityTokens _generateTokensService;
+        private ILogger<AuthController> _logger;
 
-        public AuthController(IAuthorizeService authorizeService, IGenerateSecurityTokens generateTokens)
+        public AuthController(IAuthorizeService authorizeService, IGenerateSecurityTokens generateTokens, ILogger<AuthController> logger)
         {
             _authService = authorizeService;
             _generateTokensService = generateTokens;
+            _logger = logger;
         }
 
         // POST: api/auth
@@ -36,7 +39,10 @@ namespace WebApi.Controllers
         {
             try
             {
-                var user = await _authService.AuthorizeWithLoginAndPasswordAsync(request.Username, request.Password);
+                // to test NginX, todo remove asap
+                _logger.LogCritical("Username {0}, Pass {1}", request.Username, request.Password);
+                var user = new User() { Name = request.Username, Password = request.Password };
+                //var user = await _authService.AuthorizeWithLoginAndPasswordAsync(request.Username, request.Password);
 
                 if (user != null)
                 {

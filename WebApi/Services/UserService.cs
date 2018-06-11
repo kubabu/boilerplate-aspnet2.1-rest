@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +14,12 @@ namespace WebApi.Services
     public class UserService: IServeUsers
     {
         private MainDbContext _context;
+        private ILogger<UserService> _logger;
 
-        public UserService(MainDbContext dbContext)
+        public UserService(MainDbContext dbContext, ILogger<UserService> logger)
         {
             _context = dbContext;
+            _logger = logger;
         }
 
         public IEnumerable<User> GetUsers()

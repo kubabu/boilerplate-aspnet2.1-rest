@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,22 +14,32 @@ namespace WebApi.Services
     {
         private ICheckPasswordService _checkPasswordService;
         private MainDbContext _context;
+        ILogger<AuthService> _logger;
 
-        public AuthService(MainDbContext dbContext, ICheckPasswordService checkPasswordService)
+        
+        public AuthService(MainDbContext dbContext, ICheckPasswordService checkPasswordService, ILogger<AuthService> logger)
         {
             _context = dbContext;
             _checkPasswordService = checkPasswordService;
+            _logger = logger;
         }
 
         public async Task<ClientUser> AuthorizeWithLoginAndPasswordAsync(string login, string password)
         {
-            var user = await _context.Users
-                .Where(u => u.Name == login)
-                .FirstOrDefaultAsync();
-            
-            if(user != null && _checkPasswordService.IsPasswordValidForUser(user, password))
+            try
             {
-                return new ClientUser(user);
+                var user = await _context.Users
+                    .Where(u => u.Name == login)
+                    .FirstOrDefaultAsync();
+
+                if (user != null && _checkPasswordService.IsPasswordValidForUser(user, password))
+                {
+                    return new ClientUser(user);
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogError("Auth error: {0} ({1})", ex.Message, ex.InnerException);
             }
             return null;
         }

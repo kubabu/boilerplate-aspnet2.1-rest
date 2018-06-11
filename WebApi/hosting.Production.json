@@ -10,5 +10,14 @@
   "server.urls": "http://localhost:54556/",
   "ConnectionStrings": {
     "MainDbContext": "User ID=postgres;Password=onix@123;Host=192.168.1.81;Port=5432;Database=onixweb;Pooling=true;"
+  },
+  "webApiSettings": {
+    "CorsClientUrls": [ "http://localhost:4200", "https://localhost:4200", "https://192.168.1.81", "https://192.168.1.81:5000", "https://192.168.1.81:5000" ],
+    "JwtSettings": {
+      "JwtKey": "97lum8c9a0mbnlzggWauNLwCDmMrQUvt9yGDhFJJ",
+      "Issuer": "onixweb.pl",
+      "Audience": "onixweb.pl",
+      "LifetimeMinutes": 30
+    }
   }
 }

@@ -35,7 +35,7 @@ namespace WebApiTests.Services
             _passwordService = new Mock<ICheckPasswordService>();
             _passwordService.Setup(p => p.IsPasswordValidForUser(It.IsAny<User>(), It.IsAny<string>()))
                 .Returns(_ifPass);
-            _authorizeService = new AuthService(dbMock.Object, _passwordService.Object);
+            //_authorizeService = new AuthService(dbMock.Object, _passwordService.Object);
         }
 
         [Test]

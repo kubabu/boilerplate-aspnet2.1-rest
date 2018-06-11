@@ -15,5 +15,14 @@
   "certificateSettings": {
     "filename": "D:\\Sources\\Web\\webapi\\WebApi\\localhost.pfx",
     "password": "pfx"
+  },
+  "webApiSettings": {
+    "CorsClientUrls": [ "http://localhost:4200", "https://localhost:4200"],
+    "JwtSettings": {
+      "JwtKey": "97lum8c9a0mbnlzggWauNLwCDmMrQUvt9yGDhFJJ",
+      "Issuer": "onixweb.pl",
+      "Audience": "onixweb.pl",
+      "LifetimeMinutes": 30
+    }
   }
 }

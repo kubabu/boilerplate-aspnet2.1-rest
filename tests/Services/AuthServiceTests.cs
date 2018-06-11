@@ -50,8 +50,10 @@ namespace WebApiTests.Services
         {
             // setup
             _ifPass = false;
+            
             // act
             var result = await _authorizeService.AuthorizeWithLoginAndPasswordAsync(_username, "invalid password");
+            
             // verify
             Assert.Null(result);
         }
@@ -65,8 +67,10 @@ namespace WebApiTests.Services
             await _dbContext.SaveChangesAsync();
             int usersCount = await _dbContext.Users.CountAsync();
             Assert.AreEqual(1, usersCount);
+
             // act
             var result = await _authorizeService.AuthorizeWithLoginAndPasswordAsync(_username, "valid password");
+            
             // verify
             Assert.NotNull(result);
             Assert.AreEqual(result.Name, _username);

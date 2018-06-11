@@ -16,3 +16,16 @@ This is code first EF Core application, after updating models run
 	
 	dotnet ef migrations add MigrationName
 	dotnet ef database update 
+
+# Unit tests
+
+Command line: 
+
+	cd webapi/tests
+	dotnet test
+
+Visual Studio can suffer from Nunit adapter cache crash. Solution: remove cache from directory:
+
+	C:\Users\username\AppData\Local\Temp\VisualStudioTestExplorerExtensions\
+
+and restart Visual Studio. More about problem: https://github.com/nunit/nunit3-vs-adapter/issues/261

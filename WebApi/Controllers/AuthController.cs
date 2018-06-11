@@ -39,10 +39,7 @@ namespace WebApi.Controllers
         {
             try
             {
-                // to test NginX, todo remove asap
-                _logger.LogCritical("Username {0}, Pass {1}", request.Username, request.Password);
-                var user = new User() { Name = request.Username, Password = request.Password };
-                //var user = await _authService.AuthorizeWithLoginAndPasswordAsync(request.Username, request.Password);
+                var user = await _authService.AuthorizeWithLoginAndPasswordAsync(request.Username, request.Password);
 
                 if (user != null)
                 {
@@ -62,7 +59,7 @@ namespace WebApi.Controllers
 
                 return NotFound("Błędny login lub hasło");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return BadRequest("Hasło jest nieprawidłowe, skontaktuj się z administratorem");
             }

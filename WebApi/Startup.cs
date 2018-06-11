@@ -75,8 +75,8 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseCors(builder =>
-                builder.AllowAnyOrigin() //WithOrigins(_settings.CorsClientUrls.ToArray())
+            app.UseCors(builder =>      // NGINX does CORS in staging and production
+                builder.WithOrigins(_settings.CorsClientUrls.ToArray())
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials()
@@ -87,6 +87,7 @@ namespace WebApi
 
             if (env.IsDevelopment())
             {
+
                 app.UseDeveloperExceptionPage();
 
                 var options = new RewriteOptions()

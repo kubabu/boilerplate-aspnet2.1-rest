@@ -26,20 +26,13 @@ namespace WebApi.Services
 
         public async Task<ClientUser> AuthorizeWithLoginAndPasswordAsync(string login, string password)
         {
-            try
-            {
-                var user = await _context.Users
-                    .Where(u => u.Name == login)
-                    .FirstOrDefaultAsync();
+            var user = await _context.Users
+                .Where(u => u.Name == login)
+                .FirstOrDefaultAsync();
 
-                if (user != null && _checkPasswordService.IsPasswordValidForUser(user, password))
-                {
-                    return new ClientUser(user);
-                }
-            }
-            catch (ArgumentException ex)
+            if (user != null && _checkPasswordService.IsPasswordValidForUser(user, password))
             {
-                _logger.LogError("Auth error: {0} ({1})", ex.Message, ex.InnerException);
+                return new ClientUser(user);
             }
             return null;
         }

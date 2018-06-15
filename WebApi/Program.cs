@@ -16,8 +16,8 @@ namespace WebApi
 {
     public class Program
     {
-        private static string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        private static string currentDir = Directory.GetCurrentDirectory();
+        private static readonly string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        private static readonly string currentDir = Directory.GetCurrentDirectory();
 
 
         public static void Main(string[] args)

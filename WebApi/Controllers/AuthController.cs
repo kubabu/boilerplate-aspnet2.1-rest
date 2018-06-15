@@ -23,7 +23,7 @@ namespace WebApi.Controllers
     {
         private IAuthorizeService _authService;
         private IGenerateSecurityTokens _generateTokensService;
-        private ILogger<AuthController> _logger;
+        private readonly ILogger<AuthController> _logger;
 
         public AuthController(IAuthorizeService authorizeService, IGenerateSecurityTokens generateTokens, ILogger<AuthController> logger)
         {
@@ -53,7 +53,7 @@ namespace WebApi.Controllers
                     {
                         token = new JwtSecurityTokenHandler().WriteToken(token),
                         validTo = token.ValidTo,
-                        user = user
+                        user
                     });
                 }
 

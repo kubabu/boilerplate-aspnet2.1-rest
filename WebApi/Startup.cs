@@ -17,6 +17,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
+using WebApi.Hubs;
 using WebApi.Models.Configuration;
 using WebApi.Models.DbContexts;
 using WebApi.Services;
@@ -38,7 +39,15 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+            services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
+            {
+                builder.WithOrigins(_settings.CorsClientUrls.ToArray())
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+            }));
+            services.AddSignalR();
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -75,21 +84,21 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseCors(builder =>      // NGINX does CORS in staging and production
-                builder.WithOrigins(_settings.CorsClientUrls.ToArray())
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials()
-            );
+            app.UseCors("CorsPolicy");
+            app.UseSignalR((options) => {
+                options.MapHub<ValuesHub>("/Hubs/Values");
+            });
 
+            app.UseForwardedHeaders(new ForwardedHeadersOptions // this needs to preceed UseAuthentication
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
             app.UseAuthentication();
             app.UseMvc();
 
             if (env.IsDevelopment())
             {
-
                 app.UseDeveloperExceptionPage();
-
                 var options = new RewriteOptions()
                     .AddRedirectToHttps();      // redirects all HTTP requests to HTTPS in dev mode
                 app.UseRewriter(options);

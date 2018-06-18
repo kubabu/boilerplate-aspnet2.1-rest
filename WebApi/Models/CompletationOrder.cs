@@ -7,7 +7,7 @@ namespace WebApi.Models
 {
     public class CompletationOrder
     {
-        int id;
-        string value;
+        public int id { get; set; }
+        public string value { get; set; }
     }
 }

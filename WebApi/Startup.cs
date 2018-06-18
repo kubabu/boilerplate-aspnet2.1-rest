@@ -86,7 +86,7 @@ namespace WebApi
         {
             app.UseCors("CorsPolicy");
             app.UseSignalR((options) => {
-                options.MapHub<ValuesHub>("/Hubs/Values");
+                options.MapHub<CompletationOrdersHub>("/Hubs/Values");
             });
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions // this needs to preceed UseAuthentication

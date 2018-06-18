@@ -9,6 +9,7 @@ namespace WebApi.Models.Configuration
     {
         public List<string> CorsClientUrls { get; set; }
         public JwtSettings JwtSettings { get; set; }
-        //public string CompletationOrdersHubUrl { get => "/Hubs/CompletationOrders"; }
+        public string CompletationOrdersHubUrl { get => "/Hubs/CompletationOrders"; }
+        public string CorsPolicyName { get => "CorsPolicy"; }
     }
 }

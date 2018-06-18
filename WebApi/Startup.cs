@@ -39,13 +39,13 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
-            {
-                builder.WithOrigins(_settings.CorsClientUrls.ToArray())
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials();
-            }));
+            services.AddCors(options => options.AddPolicy(_settings.CorsPolicyName, builder =>
+                {
+                    builder.WithOrigins(_settings.CorsClientUrls.ToArray())
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
+                }));
             services.AddSignalR();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -84,9 +84,9 @@ namespace WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseCors("CorsPolicy");
+            app.UseCors(_settings.CorsPolicyName);
             app.UseSignalR((options) => {
-                options.MapHub<CompletationOrdersHub>("/Hubs/Values");
+                options.MapHub<CompletationOrdersHub>(_settings.CompletationOrdersHubUrl);
             });
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions // this needs to preceed UseAuthentication

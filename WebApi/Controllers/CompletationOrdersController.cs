@@ -8,36 +8,40 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using WebApi.Hubs;
 using WebApi.Models;
+using WebApi.Services.Interfaces;
 
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     public class CompletationOrdersController: Controller
     {
-        public static List<CompletationOrder> Source { get; set; } = new List<CompletationOrder>();
-
         readonly ILogger<CompletationOrdersController> _logger;
         private readonly IHubContext<CompletationOrdersHub> _context;
+        private readonly ICompleteOrdersService _ordersService;
 
 
-        public CompletationOrdersController(ILogger<CompletationOrdersController> logger, IHubContext<CompletationOrdersHub> hub)
+        public CompletationOrdersController(ILogger<CompletationOrdersController> logger,
+            IHubContext<CompletationOrdersHub> hub,
+            ICompleteOrdersService ordersService)
         {
             _context = hub;
             _logger = logger;
+            _ordersService = ordersService;
         }
 
         // GET api/values
         [HttpGet]
         public IEnumerable<CompletationOrder> Get()
         {
-            return Source;
+            return _ordersService.GetOrders();
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public CompletationOrder Get(int id)
+        public async Task<CompletationOrder> Get(int id)
         {
-            return Source[id];
+            var order = await _ordersService.GetOrderAsync(id);
+            return order;
         }
 
         // POST api/values
@@ -46,29 +50,42 @@ namespace WebApi.Controllers
         {
             if(value != null)
             {
-                Source.Add(value);
-                await _context.Clients.All.SendAsync("Add", value);
+                var order = await _ordersService.AddOrderAsync(value);
+                await _context.Clients.All.SendAsync("Add", order);
             }
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public async void Put(int id, [FromBody] CompletationOrder value)
+        public async Task<IActionResult> Put(int id, [FromBody] CompletationOrder value)
         {
-            if (value != null)
+            try
             {
-                Source[id] = value;
-                await _context.Clients.All.SendAsync("Update", value);
+                var updated = await _ordersService.UpdateOrderAsync(value, id);
+                await _context.Clients.All.SendAsync("Update", updated);
+            } 
+            catch (Exception ex)
+            {
+                return NotFound();
             }
+            return NoContent();
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
-        public async void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var item = Source[id];
-            Source.Remove(item);
-            await _context.Clients.All.SendAsync("Delete", item);
+            try
+            {
+                var item = await _ordersService.DeleteOrderAsync(id);
+                await _context.Clients.All.SendAsync("Delete", item);
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+            return NoContent();
         }
+
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using WebApi.Models.DbContexts;
 using System;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace WebApi.Migrations
 {

@@ -43,10 +43,7 @@ namespace WebApi.Controllers
 
                 if (user != null)
                 {
-                    var claims = new[]
-                    {
-                        new Claim(ClaimTypes.Name, user.Name)
-                    };
+                    var claims = _authService.GetClaims(user);
                     var token = _generateTokensService.GenerateSecurityToken(claims);
 
                     return Ok(new

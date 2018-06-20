@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApi.Models;
 using WebApi.Models.DbContexts;
@@ -24,7 +25,7 @@ namespace WebApi.Services
             _logger = logger;
         }
 
-        public async Task<ClientUser> AuthorizeWithLoginAndPasswordAsync(string login, string password)
+        public async Task<UserViewModel> AuthorizeWithLoginAndPasswordAsync(string login, string password)
         {
             var user = await _context.Users
                 .Where(u => u.Name == login)
@@ -32,9 +33,23 @@ namespace WebApi.Services
 
             if (user != null && _checkPasswordService.IsPasswordValidForUser(user, password))
             {
-                return new ClientUser(user);
+                var result = new UserViewModel(user);
+                result.Tabs = new List<string>() { "Admin" };
+
+                return result;
             }
             return null;
+        }
+
+        public Claim[] GetClaims(UserViewModel user)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Role, user.Role)
+            };
+
+            return claims;
         }
     }
 }

@@ -14,10 +14,12 @@ namespace WebApi.Services
     public class UserService: IServeUsers
     {
         private MainDbContext _context;
+        private ICheckPasswordService _checkPasswordService;
         private ILogger<UserService> _logger;
 
-        public UserService(MainDbContext dbContext, ILogger<UserService> logger)
+        public UserService(MainDbContext dbContext, ICheckPasswordService checkPasswordService, ILogger<UserService> logger)
         {
+            _checkPasswordService = checkPasswordService;
             _context = dbContext;
             _logger = logger;
         }
@@ -35,6 +37,15 @@ namespace WebApi.Services
         public async Task<bool> UpdateUserAsync(User user)
         {
             _context.Entry(user).State = EntityState.Modified;
+            if (string.IsNullOrEmpty(user.Password) || string.IsNullOrWhiteSpace(user.Password))
+            {
+                var userCurrentState = await GetUserAsync(user.Id); // keep current password
+                user.Password = userCurrentState.Password;
+            }
+            else
+            {
+                user.Password = _checkPasswordService.HashPassword(user.Password);
+            }
 
             try
             {

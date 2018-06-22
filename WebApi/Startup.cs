@@ -51,16 +51,7 @@ namespace WebApi
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = _settings.JwtSettings.Issuer,
-                        ValidAudience = _settings.JwtSettings.Issuer,
-                        IssuerSigningKey = new SymmetricSecurityKey(_settings.JwtSettings.JwtKeyBytes)
-                    };
+                    options.TokenValidationParameters = _settings.JwtSettings.GetTokenValidationParameters();
                 });
             services.AddMvc();
 

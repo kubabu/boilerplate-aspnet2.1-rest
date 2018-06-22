@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +15,19 @@ namespace WebApi.Models.Configuration
         public int LifetimeMinutes { get; set; }
 
         public Byte[] JwtKeyBytes { get => Encoding.UTF8.GetBytes(JwtKey); }
+
+        public TokenValidationParameters GetTokenValidationParameters()
+        {
+            return new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = Issuer,
+                ValidAudience = Issuer,
+                IssuerSigningKey = new SymmetricSecurityKey(JwtKeyBytes)
+            };
+        }
     }
 }

@@ -22,44 +22,59 @@ namespace WebApi.Controllers
     public class AuthController : Controller
     {
         private IAuthorizeService _authService;
-        private IGenerateSecurityTokens _generateTokensService;
         private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IAuthorizeService authorizeService, IGenerateSecurityTokens generateTokens, ILogger<AuthController> logger)
+        public AuthController(IAuthorizeService authorizeService, ILogger<AuthController> logger)
         {
             _authService = authorizeService;
-            _generateTokensService = generateTokens;
             _logger = logger;
         }
 
         // POST: api/auth
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> PostTokenRequest([FromBody] TokenRequest request)
+        public async Task<IActionResult> PostTokenRequest([FromBody] TokenIssueRequest request)
         {
             try
             {
-                var user = await _authService.AuthorizeWithLoginAndPasswordAsync(request.Username, request.Password);
+                var user = await _authService.AuthorizeWithLoginAndPasswordAsync(request);
 
                 if (user != null)
                 {
-                    var claims = _authService.GetClaims(user);
-                    var token = _generateTokensService.GenerateSecurityToken(claims);
-
-                    return Ok(new
-                    {
-                        token = new JwtSecurityTokenHandler().WriteToken(token),
-                        validTo = token.ValidTo,
-                        user
-                    });
+                    return AuthTokenResponse(user);
                 }
 
                 return NotFound("Błędny login lub hasło");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return BadRequest("Hasło jest nieprawidłowe, skontaktuj się z administratorem");
             }
+        }
+
+        // POST: api/auth/reissue
+        [Authorize]
+        [HttpPost("reissue")]
+        public async Task<IActionResult> PostTokenReissueRequest([FromBody] TokenReissueRequest reissueRequest)
+        {
+            var user = await _authService.AuthorizeUserWithToken(reissueRequest);
+            if (user != null)
+            {
+                return AuthTokenResponse(user);
+            }
+            return BadRequest("");
+        }
+
+        private IActionResult AuthTokenResponse(AuthorizedUser user)
+        {
+            var response = _authService.PrepareToken(user);
+            
+            return Ok(new
+            {
+                token = response.Token,
+                validTo = response.ValidTo,
+                user
+            });
         }
     }
 }

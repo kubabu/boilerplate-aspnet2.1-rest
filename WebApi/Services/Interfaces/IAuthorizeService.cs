@@ -9,7 +9,9 @@ namespace WebApi.Services.Interfaces
 {
     public interface IAuthorizeService
     {
-        Task<UserViewModel> AuthorizeWithLoginAndPasswordAsync(string login, string password);
-        Claim[] GetClaims(UserViewModel user);
+        Task<AuthorizedUser> AuthorizeWithLoginAndPasswordAsync(TokenIssueRequest issueRequest);
+        Task<AuthorizedUser> AuthorizeUserWithToken(TokenReissueRequest reissueRequest);
+        Claim[] GetClaims(AuthorizedUser user);
+        AuthorizationResult PrepareToken(AuthorizedUser user);
     }
 }

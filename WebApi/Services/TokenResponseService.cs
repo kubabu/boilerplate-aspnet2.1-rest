@@ -43,11 +43,12 @@ namespace WebApi.Services
         {
             var claims = GetClaims(user);
             var token = _generateTokensService.GenerateSecurityToken(claims, _jwtSettings, DateTime.Now);
-            
+            var writtenToken = _generateTokensService.WriteToken(token);
+
             return new AuthorizationResult()
             {
                 User = user,
-                Token = _generateTokensService.WriteToken(token),
+                Token = writtenToken,
                 ValidTo = token.ValidTo
             };
         }

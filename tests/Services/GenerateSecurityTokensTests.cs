@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using FluentAssertions;
+using Microsoft.IdentityModel.Tokens;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -49,39 +50,39 @@ namespace WebApiTests.Services
         [Test]
         public void IsGenerated()
         {
-            var somewhen = DateTime.Now; // change it in 100 years or test will fail
+            var somewhen = DateTime.Now;
+
+            // act
             var token = _service.GenerateSecurityToken(_cfg.Claims, _cfg.Settings, somewhen);
             var tokenString = _service.WriteToken(token);
 
             // verify
-            Assert.NotNull(token);
-            Assert.IsNotNull(tokenString);
+            token.Should().NotBeNull();
+            tokenString.Should().NotBeNullOrEmpty();
+            tokenString.Should().NotBeNullOrWhiteSpace();
 
             var tokenHandler = new JwtSecurityTokenHandler();
             if (tokenHandler.CanReadToken(tokenString))
             {
-                var valParameters = _cfg.Settings.GetTokenValidationParameters();
-                //valParameters.NameClaimType 
-                var res = tokenHandler.ValidateToken(tokenString, valParameters, out var rawToken);
+                var res = tokenHandler.ValidateToken(tokenString, 
+                    _cfg.Settings.GetTokenValidationParameters(),
+                    out var rawToken);
                 var validatedToken = (JwtSecurityToken)rawToken;
 
                 var claims = validatedToken.Claims.GetEnumerator();
-                while(claims.MoveNext())
+                var verifiedClaims = 0;
+                var expectedClaims = 2;
+                while (claims.MoveNext())
                 {
                     var claim = claims.Current;
-                    if (claim.Type == ClaimTypes.Name) // read name claim
+
+                    if ((claim.Type == ClaimTypes.Name && claim.Value == _cfg.Name)
+                    || (claim.Type == ClaimTypes.Role && claim.Value == _cfg.Role))
                     {
-                        if (claim.Value == _cfg.Name)       // com
-                        {
-                            Assert.NotNull(tokenString);
-                        }
+                        verifiedClaims++;
                     }
                 }
-
-                if (rawToken != null)  // TODO read name claim, compare with 
-                {
-                    Assert.NotNull(tokenString);
-                }
+                verifiedClaims.Should().Be(expectedClaims);
             }
         }
     }

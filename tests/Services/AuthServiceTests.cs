@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using WebApi.Models;
+using WebApi.Models.Configuration;
 using WebApi.Models.DbContexts;
 using WebApi.Services;
 using WebApi.Services.Interfaces;
@@ -19,7 +20,7 @@ namespace WebApiTests.Services
         string _username = "FooBar";
         bool _ifPass;
         MainDbContext _dbContext;
-        IAuthorizeService _authorizeService;
+        IAuthorizeUsersService _authorizeService;
 
         [SetUp]
         public void Setup()
@@ -42,7 +43,8 @@ namespace WebApiTests.Services
             passwordService.Setup(p => p.IsPasswordValidForUser(It.IsAny<User>(), It.IsAny<string>()))
                 .Returns(() => this._ifPass);
 
-            _authorizeService = new AuthService(_dbContext, passwordService.Object, Mock.Of<ILogger<AuthService>>());
+            _authorizeService = new AuthorizeUsersService(_dbContext, passwordService.Object,
+                Mock.Of<IGenerateSecurityTokens>(), Mock.Of<ILogger<AuthorizeUsersService>>(), new WebApiSettings());
         }
 
         [Test]
@@ -50,9 +52,10 @@ namespace WebApiTests.Services
         {
             // setup
             _ifPass = false;
+            var request = new TokenIssueRequest() { Username = _username, Password = "invalid password" };
             
             // act
-            var result = await _authorizeService.AuthorizeWithLoginAndPasswordAsync(_username, "invalid password");
+            var result = await _authorizeService.AuthorizeWithLoginAndPasswordAsync(request);
             
             // verify
             Assert.Null(result);
@@ -67,9 +70,10 @@ namespace WebApiTests.Services
             await _dbContext.SaveChangesAsync();
             int usersCount = await _dbContext.Users.CountAsync();
             Assert.AreEqual(1, usersCount);
+            var request = new TokenIssueRequest() { Username = _username, Password = "valid password" };
 
             // act
-            var result = await _authorizeService.AuthorizeWithLoginAndPasswordAsync(_username, "valid password");
+            var result = await _authorizeService.AuthorizeWithLoginAndPasswordAsync(request);
             
             // verify
             Assert.NotNull(result);

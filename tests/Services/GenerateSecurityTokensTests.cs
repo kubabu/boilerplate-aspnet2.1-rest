@@ -38,13 +38,13 @@ namespace WebApiTests.Services
             };
             WebApiSettings apiSettings = new WebApiSettings() { JwtSettings = _settings };
 
-            _service = new GenerateSecurityTokens(apiSettings);
+            _service = new GenerateSecurityTokens();
         }
 
         [Test]
         public void IsGenerated()
         {
-            var token = _service.GenerateSecurityToken(_claims);
+            var token = _service.GenerateSecurityToken(_claims, _settings);
 
             // verify
             Assert.NotNull(token);

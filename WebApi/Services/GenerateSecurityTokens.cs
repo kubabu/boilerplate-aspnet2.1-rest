@@ -12,22 +12,15 @@ namespace WebApi.Services
 {
     public class GenerateSecurityTokens: IGenerateSecurityTokens
     {
-        private JwtSettings _settings;
-
-        public GenerateSecurityTokens(WebApiSettings settings)
+        public JwtSecurityToken GenerateSecurityToken(Claim[] claims, JwtSettings settings)
         {
-            _settings = settings.JwtSettings;
-        }
-
-        public JwtSecurityToken GenerateSecurityToken(Claim[] claims)
-        {
-            var key = new SymmetricSecurityKey(_settings.JwtKeyBytes);  // todo: maybe put there asymmetric RSA?
+            var key = new SymmetricSecurityKey(settings.JwtKeyBytes);  // todo: maybe put there asymmetric RSA?
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddMinutes(_settings.LifetimeMinutes);
+            var expires = DateTime.Now.AddMinutes(settings.LifetimeMinutes);
 
             var token = new JwtSecurityToken(
-                issuer: _settings.Issuer,
-                audience: _settings.Audience,
+                issuer: settings.Issuer,
+                audience: settings.Audience,
                 claims: claims,
                 expires: expires,
                 signingCredentials: creds);

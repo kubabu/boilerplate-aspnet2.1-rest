@@ -7,7 +7,7 @@ using WebApi.Models;
 
 namespace WebApi.Services.Interfaces
 {
-    public interface IAuthorizeService
+    public interface IAuthorizeUsersService
     {
         Task<AuthorizedUser> AuthorizeWithLoginAndPasswordAsync(TokenIssueRequest issueRequest);
         Task<AuthorizedUser> AuthorizeUserWithToken(TokenReissueRequest reissueRequest);

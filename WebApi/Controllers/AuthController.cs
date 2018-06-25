@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using WebApi.Models;
-using WebApi.Models.Configuration;
-using WebApi.Services;
 using WebApi.Services.Interfaces;
 
 
@@ -21,10 +13,10 @@ namespace WebApi.Controllers
     [Route("api/auth")]
     public class AuthController : Controller
     {
-        private IAuthorizeService _authService;
+        private IAuthorizeUsersService _authService;
         private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IAuthorizeService authorizeService, ILogger<AuthController> logger)
+        public AuthController(IAuthorizeUsersService authorizeService, ILogger<AuthController> logger)
         {
             _authService = authorizeService;
             _logger = logger;

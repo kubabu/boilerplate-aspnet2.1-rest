@@ -14,19 +14,19 @@ using WebApi.Services.Interfaces;
 
 namespace WebApi.Services
 {
-    public class AuthService: IAuthorizeService
+    public class AuthorizeUsersService: IAuthorizeUsersService
     {
         private ICheckPasswordService _checkPasswordService;
         private MainDbContext _context;
         private JwtSettings _jwtSettings;
         private IGenerateSecurityTokens _generateTokensService;
-        ILogger<AuthService> _logger;
+        ILogger<AuthorizeUsersService> _logger;
 
         
-        public AuthService(MainDbContext dbContext, 
+        public AuthorizeUsersService(MainDbContext dbContext, 
             ICheckPasswordService checkPasswordService,
             IGenerateSecurityTokens generateTokensService,
-            ILogger<AuthService> logger,
+            ILogger<AuthorizeUsersService> logger,
             WebApiSettings settings)
         {
             _context = dbContext;
@@ -59,7 +59,7 @@ namespace WebApi.Services
                     _jwtSettings.GetTokenValidationParameters(), 
                     out var rawToken);
                 var validatedToken = (JwtSecurityToken)rawToken;
-                if (rawToken != null)  // TODO read name claim, compare with 
+                if (rawToken != null)  // TODO read name claim, compare with request
                 {
                     // find user
                     var authUser = new AuthorizedUser(await GetUser(reissueRequest.Username));
@@ -69,6 +69,14 @@ namespace WebApi.Services
             }
             throw new NotImplementedException();
         }
+
+        private async Task<User> GetUser(string username)
+        {
+            return await _context.Users
+                .Where(u => u.Name == username)
+                .FirstOrDefaultAsync();
+        }
+
 
         public Claim[] GetClaims(AuthorizedUser user)
         {
@@ -81,17 +89,11 @@ namespace WebApi.Services
             return claims;
         }
 
-        private async Task<User> GetUser(string username)
-        {
-            return await _context.Users
-                .Where(u => u.Name == username)
-                .FirstOrDefaultAsync();
-        }
 
         public AuthorizationResult PrepareToken(AuthorizedUser user)
         {
             var claims = GetClaims(user);
-            var token = _generateTokensService.GenerateSecurityToken(claims);
+            var token = _generateTokensService.GenerateSecurityToken(claims, _jwtSettings);
             var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
             return new AuthorizationResult()

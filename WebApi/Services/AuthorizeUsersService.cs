@@ -19,19 +19,16 @@ namespace WebApi.Services
         private ICheckPasswordService _checkPasswordService;
         private MainDbContext _context;
         private JwtSettings _jwtSettings;
-        private IGenerateSecurityTokens _generateTokensService;
         ILogger<AuthorizeUsersService> _logger;
 
         
         public AuthorizeUsersService(MainDbContext dbContext, 
             ICheckPasswordService checkPasswordService,
-            IGenerateSecurityTokens generateTokensService,
             ILogger<AuthorizeUsersService> logger,
             WebApiSettings settings)
         {
             _context = dbContext;
             _checkPasswordService = checkPasswordService;
-            _generateTokensService = generateTokensService; 
             _logger = logger;
             _jwtSettings = settings.JwtSettings;
         }
@@ -75,33 +72,6 @@ namespace WebApi.Services
             return await _context.Users
                 .Where(u => u.Name == username)
                 .FirstOrDefaultAsync();
-        }
-
-
-        public Claim[] GetClaims(AuthorizedUser user)
-        {
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name, user.Name),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
-
-            return claims;
-        }
-
-
-        public AuthorizationResult PrepareToken(AuthorizedUser user)
-        {
-            var claims = GetClaims(user);
-            var token = _generateTokensService.GenerateSecurityToken(claims, _jwtSettings);
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-
-            return new AuthorizationResult()
-            {
-                User = user,
-                Token = tokenString,
-                ValidTo = token.ValidTo
-            };
         }
     }
 }

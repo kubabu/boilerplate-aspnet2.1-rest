@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security;
 using System.Security.Claims;
 using System.Text;
 using WebApi.Models.Configuration;
@@ -12,60 +13,71 @@ using WebApi.Services.Interfaces;
 
 namespace WebApiTests.Services
 {
+    public class TokenTestsConfig
+    {
+        public JwtSettings Settings { get => new JwtSettings()
+            {
+                JwtKey = "#SuperSecret123 but it needs to be longer than 128bits or something",
+                Audience = "Oh my!",
+                Issuer = "Oh my!",
+                LifetimeMinutes = 20,
+            };
+        }
+        public string Name { get => "User Name to be used in claim tests"; }
+        public string Role { get => "Name of Role to be used in claim tests"; }
+        public Claim[] Claims { get => new[]
+            {
+                new Claim(ClaimTypes.Name, Name),
+                new Claim(ClaimTypes.Role, Role)
+            };
+        }
+    }
+
+
     public class GenerateSecurityTokensTests
     {
-        string _name = "Name";
-        string _role = "Role";
-        Claim[] _claims;
-
+        private TokenTestsConfig _cfg;
         private IGenerateSecurityTokens _service;
-        JwtSettings _settings;
-
-
 
         [SetUp]
         public void Setup()
         {
-            _claims = new[]
-            {
-                new Claim(ClaimTypes.Name, _name),
-                new Claim(ClaimTypes.Role, _role)
-            };
-            _settings = new JwtSettings() {
-                JwtKey = "#SuperSecret123",
-                Audience = "Oh my!",
-                LifetimeMinutes = 20,
-            };
-            WebApiSettings apiSettings = new WebApiSettings() { JwtSettings = _settings };
-
+            _cfg = new TokenTestsConfig();
             _service = new GenerateSecurityTokens();
         }
 
         [Test]
         public void IsGenerated()
         {
-            var token = _service.GenerateSecurityToken(_claims, _settings);
+            var somewhen = DateTime.Now; // change it in 100 years or test will fail
+            var token = _service.GenerateSecurityToken(_cfg.Claims, _cfg.Settings, somewhen);
+            var tokenString = _service.WriteToken(token);
 
             // verify
             Assert.NotNull(token);
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-            var tokenHandler = new JwtSecurityTokenHandler();
-            //var validationParameters = new TokenValidationParameters
-            //{
-            //    //NameClaimType = username,
-            //    ValidateIssuer = true,
-            //    ValidateAudience = true,
-            //    ValidateLifetime = true,
-            //    ValidateIssuerSigningKey = true,
-            //    ValidIssuer = _settings.Issuer,
-            //    ValidAudience = _settings.Issuer,
-            //    IssuerSigningKey = new SymmetricSecurityKey(_settings.JwtKeyBytes)
-            //};
+            Assert.IsNotNull(tokenString);
 
+            var tokenHandler = new JwtSecurityTokenHandler();
             if (tokenHandler.CanReadToken(tokenString))
             {
-                var res = tokenHandler.ValidateToken(tokenString, _settings.GetTokenValidationParameters(), out var rawToken);
+                var valParameters = _cfg.Settings.GetTokenValidationParameters();
+                //valParameters.NameClaimType 
+                var res = tokenHandler.ValidateToken(tokenString, valParameters, out var rawToken);
                 var validatedToken = (JwtSecurityToken)rawToken;
+
+                var claims = validatedToken.Claims.GetEnumerator();
+                while(claims.MoveNext())
+                {
+                    var claim = claims.Current;
+                    if (claim.Type == ClaimTypes.Name) // read name claim
+                    {
+                        if (claim.Value == _cfg.Name)       // com
+                        {
+                            Assert.NotNull(tokenString);
+                        }
+                    }
+                }
+
                 if (rawToken != null)  // TODO read name claim, compare with 
                 {
                     Assert.NotNull(tokenString);

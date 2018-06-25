@@ -63,6 +63,7 @@ namespace WebApi
             services.AddTransient<WebApiSettings>(_ => _settings);
 
             services.AddTransient<IAuthorizeUsersService, AuthorizeUsersService>();
+            services.AddTransient<IPrepareTokenResponse, TokenResponseService>();
             services.AddTransient<IGenerateSecurityTokens, GenerateSecurityTokens>();
             services.AddTransient<ICheckPasswordService, CheckPasswordService>();
             services.AddTransient<IServeUsers, UserService>();

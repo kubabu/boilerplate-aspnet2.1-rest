@@ -22,7 +22,7 @@ namespace WebApi.Models.Configuration
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = Issuer,
-                ValidAudience = Issuer,
+                ValidAudience = Audience,
                 IssuerSigningKey = new SymmetricSecurityKey(JwtKeyBytes)
             };
         }

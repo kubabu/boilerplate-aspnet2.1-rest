@@ -11,7 +11,5 @@ namespace WebApi.Services.Interfaces
     {
         Task<AuthorizedUser> AuthorizeWithLoginAndPasswordAsync(TokenIssueRequest issueRequest);
         Task<AuthorizedUser> AuthorizeUserWithToken(TokenReissueRequest reissueRequest);
-        Claim[] GetClaims(AuthorizedUser user);
-        AuthorizationResult PrepareToken(AuthorizedUser user);
     }
 }

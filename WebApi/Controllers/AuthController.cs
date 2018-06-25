@@ -13,12 +13,16 @@ namespace WebApi.Controllers
     [Route("api/auth")]
     public class AuthController : Controller
     {
-        private IAuthorizeUsersService _authService;
+        private readonly IAuthorizeUsersService _authService;
+        private readonly IPrepareTokenResponse _responseService;
         private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IAuthorizeUsersService authorizeService, ILogger<AuthController> logger)
+        public AuthController(IAuthorizeUsersService authorizeService,
+            IPrepareTokenResponse responseService,
+            ILogger<AuthController> logger)
         {
             _authService = authorizeService;
+            _responseService = responseService;
             _logger = logger;
         }
 
@@ -40,6 +44,11 @@ namespace WebApi.Controllers
             }
             catch (Exception ex)
             {
+                if (ex is InvalidOperationException && ex.InnerException is TimeoutException)
+                {
+                    _logger.LogError("TimeoutException when trying to connect with DB");
+                    return StatusCode(500, "Serwer nie otrzymał odpowiedzi z bazy danych, skontaktuj się z administratorem");
+                }
                 return BadRequest("Hasło jest nieprawidłowe, skontaktuj się z administratorem");
             }
         }
@@ -59,7 +68,7 @@ namespace WebApi.Controllers
 
         private IActionResult AuthTokenResponse(AuthorizedUser user)
         {
-            var response = _authService.PrepareToken(user);
+            var response = _responseService.PrepareToken(user);
             
             return Ok(new
             {

@@ -43,8 +43,10 @@ namespace WebApiTests.Services
             passwordService.Setup(p => p.IsPasswordValidForUser(It.IsAny<User>(), It.IsAny<string>()))
                 .Returns(() => this._ifPass);
 
-            _authorizeService = new AuthorizeUsersService(_dbContext, passwordService.Object,
-                Mock.Of<IGenerateSecurityTokens>(), Mock.Of<ILogger<AuthorizeUsersService>>(), new WebApiSettings());
+            _authorizeService = new AuthorizeUsersService(_dbContext, 
+                passwordService.Object,
+                Mock.Of<ILogger<AuthorizeUsersService>>(), 
+                new WebApiSettings());
         }
 
         [Test]

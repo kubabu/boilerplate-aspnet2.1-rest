@@ -22,7 +22,7 @@ namespace WebApi
 
         public static void Main(string[] args)
         {
-            //Console.Title = "ONIX Web API";
+            Console.Title = "ONIX Web API";
             BuildWebHost(args).Run();
         }
 

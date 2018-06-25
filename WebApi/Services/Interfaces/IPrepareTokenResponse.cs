@@ -8,6 +8,6 @@ namespace WebApi.Services.Interfaces
 {
     public interface IPrepareTokenResponse
     {
-        AuthorizationResult PrepareToken(AuthorizedUser user);
+        AuthorizationResult PrepareTokenResponse(AuthorizedUser user);
     }
 }

@@ -65,6 +65,7 @@ namespace WebApi
             services.AddTransient<IAuthorizeUsersService, AuthorizeUsersService>();
             services.AddTransient<IPrepareTokenResponse, TokenResponseService>();
             services.AddTransient<IGenerateSecurityTokens, GenerateSecurityTokens>();
+            services.AddTransient<ICheckSecurityTokens, CheckSecurityTokensService>();
             services.AddTransient<ICheckPasswordService, CheckPasswordService>();
             services.AddTransient<IServeUsers, UserService>();
             services.AddTransient<ICompleteOrdersService, CompleteOrdersService>();

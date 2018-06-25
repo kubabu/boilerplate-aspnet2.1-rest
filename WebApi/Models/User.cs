@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Models
 {
-    public class User
+    public class User: IAppUser
     {
         public int Id { get; set; }
         public string Name { get; set; }

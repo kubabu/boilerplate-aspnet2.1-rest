@@ -64,8 +64,9 @@ namespace WebApi.Controllers
                 var updated = await _ordersService.UpdateOrderAsync(value, id);
                 await _context.Clients.All.SendAsync("Update", updated);
             } 
-            catch (Exception ex)
+            catch (Exception)
             {
+                // TODO use exception to get more readable return codes
                 return NotFound();
             }
             return NoContent();
@@ -80,8 +81,9 @@ namespace WebApi.Controllers
                 var item = await _ordersService.DeleteOrderAsync(id);
                 await _context.Clients.All.SendAsync("Delete", item);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                // TODO use exception to get more readable return codes
                 return NotFound();
             }
             return NoContent();

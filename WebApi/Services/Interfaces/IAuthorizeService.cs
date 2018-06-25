@@ -10,6 +10,6 @@ namespace WebApi.Services.Interfaces
     public interface IAuthorizeUsersService
     {
         Task<AuthorizedUser> AuthorizeWithLoginAndPasswordAsync(TokenIssueRequest issueRequest);
-        Task<AuthorizedUser> AuthorizeUserWithToken(TokenReissueRequest reissueRequest);
+        Task<AuthorizedUser> AuthorizeUserWithTokenAsync(TokenReissueRequest reissueRequest);
     }
 }

@@ -80,7 +80,7 @@ namespace WebApiTests.Services
         [Test]
         public void ResponseTest()
         {
-            var result = _service.PrepareToken(user);
+            var result = _service.PrepareTokenResponse(user);
 
             result.Token.Should().Be(writtenToken);
             result.User.Should().Be(user);

@@ -39,7 +39,7 @@ namespace WebApi.Services
         }
 
 
-        public AuthorizationResult PrepareToken(AuthorizedUser user)
+        public AuthorizationResult PrepareTokenResponse(AuthorizedUser user)
         {
             var claims = GetClaims(user);
             var token = _generateTokensService.GenerateSecurityToken(claims, _jwtSettings, DateTime.Now);

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace WebApi.Models
 {
-    public class AuthorizedUser
+    public class AuthorizedUser: IAppUser
     {
         // mask password, primary key
         public string Name { get; set; }
@@ -14,10 +14,10 @@ namespace WebApi.Models
         public string StartupUri { get; set; }
         public string Role { get; set; }
         
-        public AuthorizedUser(User user)
+        public AuthorizedUser(IAppUser user)
         {
             Name = user.Name;
-            Description = user.Description;
+            //Description = user.Description;
             QrIdentifier = user.QrIdentifier;
             StartupUri = user.StartupUri;
             Role = "Admin";

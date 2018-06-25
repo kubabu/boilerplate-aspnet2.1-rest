@@ -17,18 +17,21 @@ namespace WebApi.Services
     public class AuthorizeUsersService: IAuthorizeUsersService
     {
         private ICheckPasswordService _checkPasswordService;
+        private ICheckSecurityTokens _checkSecurityTokens;
         private MainDbContext _context;
         private JwtSettings _jwtSettings;
         ILogger<AuthorizeUsersService> _logger;
 
-        
-        public AuthorizeUsersService(MainDbContext dbContext, 
+
+        public AuthorizeUsersService(MainDbContext dbContext,
             ICheckPasswordService checkPasswordService,
+            ICheckSecurityTokens checkSecurityTokens,
             ILogger<AuthorizeUsersService> logger,
             WebApiSettings settings)
         {
             _context = dbContext;
             _checkPasswordService = checkPasswordService;
+            _checkSecurityTokens = checkSecurityTokens;
             _logger = logger;
             _jwtSettings = settings.JwtSettings;
         }
@@ -36,7 +39,7 @@ namespace WebApi.Services
         
         public async Task<AuthorizedUser> AuthorizeWithLoginAndPasswordAsync(TokenIssueRequest issueRequest)
         {
-            var user = await GetUser(issueRequest.Username);
+            var user = await GetUserByName(issueRequest.Username);
 
             if (user != null && _checkPasswordService.IsPasswordValidForUser(user, issueRequest.Password))
             {
@@ -46,28 +49,20 @@ namespace WebApi.Services
             return null;
         }
 
-        public async Task<AuthorizedUser> AuthorizeUserWithToken(TokenReissueRequest reissueRequest)
+        public async Task<AuthorizedUser> AuthorizeUserWithTokenAsync(TokenReissueRequest reissueRequest)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            // check if token is valid
-            if (tokenHandler.CanReadToken(reissueRequest.Token))
-            {
-                var res = tokenHandler.ValidateToken(reissueRequest.Token, 
-                    _jwtSettings.GetTokenValidationParameters(), 
-                    out var rawToken);
-                var validatedToken = (JwtSecurityToken)rawToken;
-                if (rawToken != null)  // TODO read name claim, compare with request
-                {
-                    // find user
-                    var authUser = new AuthorizedUser(await GetUser(reissueRequest.Username));
-                }
-                return null;
+            var user = await GetUserByName(reissueRequest.Username);
 
+            if (user != null && _checkSecurityTokens.IsValidForUser(user, reissueRequest.Token))
+            {
+                var result = new AuthorizedUser(user);
+                return result;
             }
-            throw new NotImplementedException();
+
+            return null;
         }
 
-        private async Task<User> GetUser(string username)
+        private async Task<User> GetUserByName(string username)
         {
             return await _context.Users
                 .Where(u => u.Name == username)

@@ -1,13 +1,10 @@
 ﻿using FluentAssertions;
-using Microsoft.IdentityModel.Tokens;
-using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security;
 using System.Security.Claims;
-using System.Text;
+using WebApi.Models;
 using WebApi.Models.Configuration;
 using WebApi.Services;
 using WebApi.Services.Interfaces;
@@ -16,7 +13,7 @@ namespace WebApiTests.Services
 {
     public class TokenTestsConfig
     {
-        public JwtSettings Settings { get => new JwtSettings()
+        public JwtSettings JwtSettings { get => new JwtSettings()
             {
                 JwtKey = "#SuperSecret123 but it needs to be longer than 128bits or something",
                 Audience = "Oh my!",
@@ -24,6 +21,7 @@ namespace WebApiTests.Services
                 LifetimeMinutes = 20,
             };
         }
+        public WebApiSettings WebApiSettings { get => new WebApiSettings() { JwtSettings = JwtSettings }; }
         public string Name { get => "User Name to be used in claim tests"; }
         public string Role { get => "Name of Role to be used in claim tests"; }
         public Claim[] Claims { get => new[]
@@ -31,6 +29,9 @@ namespace WebApiTests.Services
                 new Claim(ClaimTypes.Name, Name),
                 new Claim(ClaimTypes.Role, Role)
             };
+        }
+        public AuthorizedUser AuthUser { get => new AuthorizedUser(new User())
+            { Name = Name, Role = Role };
         }
     }
 
@@ -50,10 +51,10 @@ namespace WebApiTests.Services
         [Test]
         public void IsGenerated()
         {
-            var somewhen = DateTime.Now;
+            var when = DateTime.Now;
 
             // act
-            var token = _service.GenerateSecurityToken(_cfg.Claims, _cfg.Settings, somewhen);
+            var token = _service.GenerateSecurityToken(_cfg.Claims, _cfg.JwtSettings, when);
             var tokenString = _service.WriteToken(token);
 
             // verify
@@ -65,7 +66,7 @@ namespace WebApiTests.Services
             if (tokenHandler.CanReadToken(tokenString))
             {
                 var res = tokenHandler.ValidateToken(tokenString, 
-                    _cfg.Settings.GetTokenValidationParameters(),
+                    _cfg.JwtSettings.GetTokenValidationParameters(),
                     out var rawToken);
                 var validatedToken = (JwtSecurityToken)rawToken;
 
@@ -83,6 +84,10 @@ namespace WebApiTests.Services
                     }
                 }
                 verifiedClaims.Should().Be(expectedClaims);
+            }
+            else
+            {
+                throw new Exception("tokenHandler could not read token!");
             }
         }
     }

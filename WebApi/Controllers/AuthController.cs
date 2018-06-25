@@ -58,17 +58,17 @@ namespace WebApi.Controllers
         [HttpPost("reissue")]
         public async Task<IActionResult> PostTokenReissueRequest([FromBody] TokenReissueRequest reissueRequest)
         {
-            var user = await _authService.AuthorizeUserWithToken(reissueRequest);
+            var user = await _authService.AuthorizeUserWithTokenAsync(reissueRequest);
             if (user != null)
             {
                 return AuthTokenResponse(user);
             }
-            return BadRequest("");
+            return BadRequest("Nieprawidłowe żądanie ponownego wystawienia JWT");
         }
 
         private IActionResult AuthTokenResponse(AuthorizedUser user)
         {
-            var response = _responseService.PrepareToken(user);
+            var response = _responseService.PrepareTokenResponse(user);
             
             return Ok(new
             {

@@ -24,7 +24,9 @@ Command line:
 	cd webapi/tests
 	dotnet test
 
-Visual Studio can suffer from Nunit adapter cache crash. Solution: remove cache from directory:
+# Unit tests not found
+
+Visual Studio (and dotnet test command line util) can suffer from Nunit adapter cache crash. Solution: remove cache from directory:
 
 	C:\Users\username\AppData\Local\Temp\VisualStudioTestExplorerExtensions\
 

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace WebApi.Models
+﻿namespace WebApi.Models
 {
     public class AuthorizedUser: IAppUser
     {
-        // mask password, primary key
+        // mask password and primary key
         public string Name { get; set; }
-        public string Description { get; set; }
         public string QrIdentifier { get; set; }
         public string StartupUri { get; set; }
         public string Role { get; set; }
@@ -17,10 +11,9 @@ namespace WebApi.Models
         public AuthorizedUser(IAppUser user)
         {
             Name = user.Name;
-            //Description = user.Description;
             QrIdentifier = user.QrIdentifier;
             StartupUri = user.StartupUri;
-            Role = "Admin";
+            Role = user.Role;
         }
     }
 }

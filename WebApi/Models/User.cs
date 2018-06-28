@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace WebApi.Models
+﻿namespace WebApi.Models
 {
     public class User: IAppUser
     {
@@ -13,5 +8,6 @@ namespace WebApi.Models
         public string Password { get; set; }
         public string QrIdentifier { get; set; }
         public string StartupUri { get; set; }
+        public string Role { get; set; }
     }
 }

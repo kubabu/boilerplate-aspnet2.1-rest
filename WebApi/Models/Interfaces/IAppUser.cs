@@ -10,5 +10,6 @@ namespace WebApi.Models
         string Name { get; }
         string QrIdentifier { get; }
         string StartupUri { get; }
+        string Role { get; }
     }
 }

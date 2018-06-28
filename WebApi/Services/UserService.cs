@@ -36,20 +36,18 @@ namespace WebApi.Services
 
         public async Task<bool> UpdateUserAsync(User user)
         {
-            _context.Entry(user).State = EntityState.Modified;
-            if (string.IsNullOrEmpty(user.Password) || string.IsNullOrWhiteSpace(user.Password))
-            {
-                var userCurrentState = await GetUserAsync(user.Id); // keep current password
-                user.Password = userCurrentState.Password;
-            }
-            else
-            {
-                user.Password = _checkPasswordService.HashPassword(user.Password);
-            }
+            //_context.Entry(user).State = EntityState.Modified; // this works if there's no logic on update
+            var storedUser = await _context.Users.Where(u => u.Id == user.Id).SingleAsync();
+            storedUser.Name = user.Name;
+            storedUser.Password = await GetPasswordForUser(user);
+            storedUser.Role = user.Role;
+            storedUser.QrIdentifier = user.QrIdentifier;
+            storedUser.StartupUri = user.StartupUri;
 
             try
             {
                 await _context.SaveChangesAsync();
+                return true;
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -61,8 +59,7 @@ namespace WebApi.Services
                 {
                     throw;
                 }
-            }
-            return true;
+            };
         }
 
         public async Task<User> AddUserAsync(User user)
@@ -81,7 +78,7 @@ namespace WebApi.Services
 
         public async Task<bool> DeleteUserAsync(int id)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(m => m.Id == id);
+            var user = await GetUserAsync(id);
             if (user == null)
             {
                 return false;
@@ -95,6 +92,21 @@ namespace WebApi.Services
         private bool UserExists(int id)
         {
             return _context.Users.Any(e => e.Id == id);
+        }
+
+        public async Task<string> GetPasswordForUser(User user)
+        {
+            if (string.IsNullOrEmpty(user.Password) || string.IsNullOrWhiteSpace(user.Password))
+            {
+                // keep current password
+                var userCurrentPass = await _context.Users
+                    .Where(u => u.Id == user.Id)
+                    .Select(u => u.Password)
+                    .SingleOrDefaultAsync();
+                    //.AsNoTracking().SingleOrDefaultAsync(m => m.Id == user.Id).Password;
+                return userCurrentPass;
+            }
+            return _checkPasswordService.HashPassword(user.Password);
         }
     }
 }

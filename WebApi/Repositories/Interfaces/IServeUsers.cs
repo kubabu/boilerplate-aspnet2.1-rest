@@ -11,5 +11,6 @@ namespace WebApi.Repositories.Interfaces
         Task<bool> UpdateUserAsync(User user);
         Task<User> AddUserAsync(User user);
         Task<bool> DeleteUserAsync(int id);
+        Task<User> GetUserByName(string name);
     }
 }

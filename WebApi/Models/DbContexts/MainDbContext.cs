@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using WebApi.Models.DbContexts.Interfaces;
 
 namespace WebApi.Models.DbContexts
 {
-    public class MainDbContext : DbContext
+    public class MainDbContext : DbContext, IAuthDbContext
     {
         public DbSet<User> Users { get; set; }
-
+    
         //public DbSet<Employee> Employees { get; set; }
         //public DbSet<Product> Products { get; set; }
         //public DbSet<Shop> Shops { get; set; }
@@ -39,6 +38,11 @@ namespace WebApi.Models.DbContexts
             //             .HasOne(sp => sp.Shop)
             //             .WithMany(s => s.ShopProducts)
             //             .HasForeignKey(sp => sp.ShopId);
+        }
+
+        async Task<int> IWebApiDbContext.SaveChangesAsync()
+        {
+            return await SaveChangesAsync();
         }
     }
 }

@@ -1,35 +1,29 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
+﻿using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using WebApi.Models;
 using WebApi.Models.Configuration;
 using WebApi.Models.DbContexts;
+using WebApi.Repositories.Interfaces;
 using WebApi.Services.Interfaces;
 
 namespace WebApi.Services
 {
     public class AuthorizeUsersService: IAuthorizeUsersService
     {
-        private ICheckPasswordService _checkPasswordService;
-        private ICheckSecurityTokens _checkSecurityTokens;
-        private MainDbContext _context;
-        private JwtSettings _jwtSettings;
-        ILogger<AuthorizeUsersService> _logger;
+        private readonly ICheckPasswordService _checkPasswordService;
+        private readonly ICheckSecurityTokens _checkSecurityTokens;
+        private readonly IServeUsers _serveUsers;
+        private readonly JwtSettings _jwtSettings;
+        private readonly ILogger<AuthorizeUsersService> _logger;
 
 
-        public AuthorizeUsersService(MainDbContext dbContext,
+        public AuthorizeUsersService(IServeUsers serveUsers,
             ICheckPasswordService checkPasswordService,
             ICheckSecurityTokens checkSecurityTokens,
             ILogger<AuthorizeUsersService> logger,
             WebApiSettings settings)
         {
-            _context = dbContext;
+            _serveUsers = serveUsers;
             _checkPasswordService = checkPasswordService;
             _checkSecurityTokens = checkSecurityTokens;
             _logger = logger;
@@ -39,7 +33,7 @@ namespace WebApi.Services
         
         public async Task<AuthorizedUser> AuthorizeWithLoginAndPasswordAsync(TokenIssueRequest issueRequest)
         {
-            var user = await GetUserByName(issueRequest.Username);
+            var user = await _serveUsers.GetUserByName(issueRequest.Username);
 
             if (user != null && _checkPasswordService.IsPasswordValidForUser(user, issueRequest.Password))
             {
@@ -51,7 +45,7 @@ namespace WebApi.Services
 
         public async Task<AuthorizedUser> AuthorizeUserWithTokenAsync(TokenReissueRequest reissueRequest)
         {
-            var user = await GetUserByName(reissueRequest.Username);
+            var user = await _serveUsers.GetUserByName(reissueRequest.Username);
 
             if (user != null && _checkSecurityTokens.IsValidForUser(user, reissueRequest.Token))
             {
@@ -60,13 +54,6 @@ namespace WebApi.Services
             }
 
             return null;
-        }
-
-        private async Task<User> GetUserByName(string username)
-        {
-            return await _context.Users
-                .Where(u => u.Name == username)
-                .FirstOrDefaultAsync();
         }
     }
 }

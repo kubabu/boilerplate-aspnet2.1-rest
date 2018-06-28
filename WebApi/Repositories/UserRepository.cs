@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Models;
 using WebApi.Models.DbContexts;
+using WebApi.Models.DbContexts.Interfaces;
 using WebApi.Repositories.Interfaces;
 using WebApi.Services.Interfaces;
 
@@ -14,9 +15,9 @@ namespace WebApi.Repositories
 {
     public class UserRepository: IServeUsers
     {
-        private MainDbContext _context;
-        private ICheckPasswordService _checkPasswordService;
-        private ILogger<UserRepository> _logger;
+        private readonly IAuthDbContext _context;
+        private readonly ICheckPasswordService _checkPasswordService;
+        private readonly ILogger<UserRepository> _logger;
 
         public UserRepository(MainDbContext dbContext, ICheckPasswordService checkPasswordService, ILogger<UserRepository> logger)
         {
@@ -104,10 +105,16 @@ namespace WebApi.Repositories
                     .Where(u => u.Id == user.Id)
                     .Select(u => u.Password)
                     .SingleOrDefaultAsync();
-                    //.AsNoTracking().SingleOrDefaultAsync(m => m.Id == user.Id).Password;
                 return userCurrentPass;
             }
             return _checkPasswordService.HashPassword(user.Password);
+        }
+
+        public async Task<User> GetUserByName(string name)
+        {
+            return await _context.Users
+                .Where(u => u.Name == name)
+                .FirstOrDefaultAsync();
         }
     }
 }

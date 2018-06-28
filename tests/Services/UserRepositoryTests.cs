@@ -5,21 +5,19 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using WebApi.Models;
 using WebApi.Models.DbContexts;
-using WebApi.Services;
+using WebApi.Repositories;
 using WebApi.Services.Interfaces;
 
 namespace WebApiTests.Services
 {
-    public class UserServiceTests
+    public class UserRepositoryTests
     {
         readonly string passwordService_passToReturn = "passwordService_passToReturn";
         MainDbContext _dbContext;
-        UserService _service;
+        UserRepository _service;
 
 
         [SetUp]
@@ -42,9 +40,9 @@ namespace WebApiTests.Services
                 .Setup(p => p.HashPassword(It.IsAny<string>()))
                 .Returns(() => this.passwordService_passToReturn);
 
-            _service = new UserService(_dbContext,
+            _service = new UserRepository(_dbContext,
                 passwordService.Object,
-                Mock.Of<ILogger<UserService>>());
+                Mock.Of<ILogger<UserRepository>>());
         }
 
         [Test]

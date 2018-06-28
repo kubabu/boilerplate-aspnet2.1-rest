@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using WebApi.Hubs;
 using WebApi.Models;
-using WebApi.Services.Interfaces;
+using WebApi.Repositories.Interfaces;
 
 namespace WebApi.Controllers
 {
@@ -17,12 +15,12 @@ namespace WebApi.Controllers
     {
         readonly ILogger<CompletationOrdersController> _logger;
         private readonly IHubContext<CompletationOrdersHub> _context;
-        private readonly ICompleteOrdersService _ordersService;
+        private readonly IServeCompletationOrders _ordersService;
 
 
         public CompletationOrdersController(ILogger<CompletationOrdersController> logger,
             IHubContext<CompletationOrdersHub> hub,
-            ICompleteOrdersService ordersService)
+            IServeCompletationOrders ordersService)
         {
             _context = hub;
             _logger = logger;

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using WebApi.Hubs;
 using WebApi.Models.Configuration;
 using WebApi.Models.DbContexts;
+using WebApi.Repositories;
+using WebApi.Repositories.Interfaces;
 using WebApi.Services;
 using WebApi.Services.Interfaces;
 
@@ -59,8 +59,8 @@ namespace WebApi
             services.AddTransient<IGenerateSecurityTokens, GenerateSecurityTokens>();
             services.AddTransient<ICheckSecurityTokens, CheckSecurityTokensService>();
             services.AddTransient<ICheckPasswordService, CheckPasswordService>();
-            services.AddTransient<IServeUsers, UserService>();
-            services.AddTransient<ICompleteOrdersService, CompleteOrdersService>();
+            services.AddTransient<IServeUsers, UserRepository>();
+            services.AddTransient<IServeCompletationOrders, CompletationOrdersRepository>();
 
             services.AddOptions();
 

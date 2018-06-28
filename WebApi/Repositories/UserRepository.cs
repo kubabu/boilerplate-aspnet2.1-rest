@@ -6,18 +6,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Models;
 using WebApi.Models.DbContexts;
+using WebApi.Repositories.Interfaces;
 using WebApi.Services.Interfaces;
 
 
-namespace WebApi.Services
+namespace WebApi.Repositories
 {
-    public class UserService: IServeUsers
+    public class UserRepository: IServeUsers
     {
         private MainDbContext _context;
         private ICheckPasswordService _checkPasswordService;
-        private ILogger<UserService> _logger;
+        private ILogger<UserRepository> _logger;
 
-        public UserService(MainDbContext dbContext, ICheckPasswordService checkPasswordService, ILogger<UserService> logger)
+        public UserRepository(MainDbContext dbContext, ICheckPasswordService checkPasswordService, ILogger<UserRepository> logger)
         {
             _checkPasswordService = checkPasswordService;
             _context = dbContext;

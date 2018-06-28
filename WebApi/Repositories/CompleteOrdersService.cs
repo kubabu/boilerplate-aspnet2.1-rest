@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Models;
-using WebApi.Services.Interfaces;
+using WebApi.Repositories.Interfaces;
 
 
-namespace WebApi.Services
+namespace WebApi.Repositories
 {
-    public class CompleteOrdersService : ICompleteOrdersService
+    public class CompletationOrdersRepository: IServeCompletationOrders
     {
         static List<CompletationOrder> Source { get; set; } = new List<CompletationOrder>();
 
 
-        public CompleteOrdersService()
+        public CompletationOrdersRepository()
         {
 
         }

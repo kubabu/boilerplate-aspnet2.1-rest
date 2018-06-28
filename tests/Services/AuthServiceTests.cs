@@ -28,12 +28,10 @@ namespace WebApiTests.Services
         {
             var connection = new SqliteConnection("DataSource=:memory:");
             connection.Open();
-
             var options = new DbContextOptionsBuilder<MainDbContext>()
                 .UseSqlite(connection)
                 .Options;
             _dbContext = new MainDbContext(options);
-            
             // Create the schema in the database
             using (var context = new MainDbContext(options))
             {
@@ -53,7 +51,7 @@ namespace WebApiTests.Services
             _authorizeService = new AuthorizeUsersService(_dbContext,
                 passwordService.Object,
                 tokenCheckService.Object,
-                Mock.Of<ILogger<AuthorizeUsersService>>(), 
+                Mock.Of<ILogger<AuthorizeUsersService>>(),
                 new WebApiSettings());
         }
 

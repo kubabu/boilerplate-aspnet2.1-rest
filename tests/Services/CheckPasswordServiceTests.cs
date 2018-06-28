@@ -1,17 +1,13 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using WebApi.Models;
 using WebApi.Services;
-using WebApi.Services.Interfaces;
 
 namespace WebApiTests.Services
 {
     public class CheckPasswordServiceTests
     {
-        private ICheckPasswordService _service;
+        private CheckPasswordService _service;
         string _pass;
         string _hashed;
 
@@ -33,10 +29,10 @@ namespace WebApiTests.Services
         public void IsValidPasswordForUser()
         {
             var user = new User();
-            Assert.True(_service.IsValidPassword(_pass, _hashed));
+            _service.IsValidPassword(_pass, _hashed).Should().BeTrue();
             user.Password = _hashed;
 
-            Assert.True(_service.IsPasswordValidForUser(user, _pass));
+            _service.IsPasswordValidForUser(user, _pass).Should().BeTrue();
         }
     }
 }

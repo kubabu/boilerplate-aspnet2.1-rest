@@ -22,8 +22,10 @@ namespace WebApi.Models.DbContexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
-              .HasKey(h => h.Id);
-
+                .HasKey(h => h.Id);
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Name)
+                .IsUnique();
             // example - relations in EF
             //modelBuilder.Entity<ShopProduct>()
             //            .HasKey(entity => new { entity.ProductId, entity.ShopId });

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApi.Hubs.Interfaces;
-using WebApi.Models;
+using WebApi.Models.Completation;
 
 namespace WebApi.Hubs
 {

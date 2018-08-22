@@ -24,10 +24,10 @@ Command line:
 	cd webapi/tests
 	dotnet test
 
-# Unit tests not found
+### Unit tests not found
 
 Visual Studio (and dotnet test command line util) can suffer from Nunit adapter cache crash. Solution: remove cache from directory:
 
 	C:\Users\username\AppData\Local\Temp\VisualStudioTestExplorerExtensions\
 
-and restart Visual Studio. More about problem: https://github.com/nunit/nunit3-vs-adapter/issues/261
+and restart Visual Studio

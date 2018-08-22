@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using WebApi.Hubs;
-using WebApi.Models;
+using WebApi.Models.Completation;
 using WebApi.Repositories.Interfaces;
 
 namespace WebApi.Controllers

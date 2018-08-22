@@ -47,6 +47,7 @@ namespace WebApi
                 });
             services.AddMvc();
 
+            // todo check if DB context can be injected by interface
             services.AddDbContext<MainDbContext>(
                 options => options.UseNpgsql(
                     Configuration.GetConnectionString(typeof(MainDbContext).FullName.Split(".").Last()))
